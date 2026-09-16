@@ -1,0 +1,90 @@
+# EMR Mobile App
+
+**Clinical Emergency Management System (CEMS)** for aesthetic professionals.
+
+Built for **3D Rejuvenation Academy | Dr. Amr Ismail, MD | www.3drejuvenationcode.com**
+
+## Overview
+
+Cross-platform iOS/Android emergency response app designed for use during aesthetic procedures when complications occur. The app works **offline-first** so it functions even without clinic Wi-Fi or cellular coverage.
+
+## Features
+
+- 🚨 **One-tap emergency activation** with protocol selection
+- 💉 **Vascular Occlusion protocol** with hyaluronidase dosing calculator
+- ⚠️ **Anaphylaxis protocol** with epinephrine weight-based calculator
+- ⏱️ **Treatment timer** with vibration alerts and quick presets
+- 👤 **Patient context** storage for allergies, meds, weight
+- 📋 **Incident log** with timestamped documentation and report preview
+- ☁️ **Offline-first** local storage on device
+
+## Tech Stack
+
+- React Native
+- Expo SDK 49
+- React Navigation
+- React Native Paper
+- AsyncStorage
+
+## Getting Started
+
+```bash
+npm install
+npx expo start
+```
+
+Then scan the QR code with:
+- **iOS**: Camera app or Expo Go
+- **Android**: Expo Go app
+
+To build native binaries:
+```bash
+npx expo prebuild
+npx expo run:ios
+npx expo run:android
+```
+
+## Verified Build
+
+Web export has been successfully built and tested:
+```bash
+npx expo export --platform web
+```
+Produces a working static bundle in `dist/`.
+
+## Windows Dev Note
+
+On Windows with recent Node versions, Expo CLI may fail with `ENOENT: node:sea` because it tries to create a directory containing a colon. If you see this after `npm install`, apply this one-line patch to `node_modules/@expo/cli/build/src/start/server/metro/externals.js`:
+
+```js
+// In NODE_STDLIB_MODULES filter, add:
+&& !x.includes(":")
+```
+
+This skips `node:sea` (not needed for React Native apps) and allows Metro to start.
+
+## Project Structure
+
+```
+EMR-App/
+├── App.js                      # Navigation & theme setup
+├── app.json                   # Expo config (iOS/Android bundle IDs)
+├── src/
+│   ├── components/              # Reusable UI components
+│   ├── constants/               # Brand theme + emergency protocols
+│   ├── screens/                 # App screens
+│   └── utils/                   # Storage & helpers
+└── assets/                    # Icons, splash, branding
+```
+
+## Brand
+
+Uses the 3D Rejuvenation Academy color palette:
+- Navy background: `#0b0e17`
+- Gold accent: `#D4AF37`
+- Teal active state: `#56d6c4`
+- Warm off-white text: `#f3ede0`
+
+## License
+
+Proprietary — 3D Rejuvenation Academy
