@@ -1,12 +1,7 @@
 {
   "expo": {
     "name": "EMR - 3D Rejuvenation Academy",
-    "owner": "3d-rejuvenation-academy",
-    "extra": {
-      "eas": {
-        "projectId": "your-eas-project-id"
-      }
-    },
+    "owner": "academy31",
     "slug": "emr-3d-rejuvenation",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#0b0e17"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.3drejuvenation.emr",
@@ -29,7 +26,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0b0e17"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -42,6 +43,11 @@
           "cameraPermission": "Allow EMR to access your camera to document emergency incidents."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "989c7323-bfdf-42ec-83b6-841f43e7ad4b"
+      }
+    }
   }
 }
