@@ -13,10 +13,17 @@ Cross-platform iOS/Android emergency response app designed for use during aesthe
 - 🚨 **One-tap emergency activation** with protocol selection
 - 💉 **Vascular Occlusion protocol** with hyaluronidase dosing calculator
 - ⚠️ **Anaphylaxis protocol** with epinephrine weight-based calculator
+- ⚡ **Local Anesthetic Toxicity** protocol with Intralipid guidance
+- 💧 **Acute Hematoma** management checklist
+- 🧊 **Vasovagal Syncope** response steps
+- 🦠 **Herpes Simplex Outbreak** antiviral protocol
+- 🧫 **Procedure-Related Infection** antibiotic guidance
+- 🔹 **Filler Nodules / Tyndall Effect** management
 - ⏱️ **Treatment timer** with vibration alerts and quick presets
 - 👤 **Patient context** storage for allergies, meds, weight
 - 📋 **Incident log** with timestamped documentation and report preview
 - ☁️ **Offline-first** local storage on device
+- 📱 **EAS Build ready** for iOS/Android store submission
 
 ## Tech Stack
 
@@ -51,6 +58,23 @@ Web export has been successfully built and tested:
 npx expo export --platform web
 ```
 Produces a working static bundle in `dist/`.
+
+## EAS Build (iOS/Android store binaries)
+
+1. Create Expo account at https://expo.dev
+2. Initialize EAS project:
+   ```bash
+   npx eas init
+   ```
+3. Build internal preview APK:
+   ```bash
+   npx eas build --platform android --profile preview
+   ```
+4. Build for App Store / Play Store:
+   ```bash
+   npx eas build --platform ios --profile production
+   npx eas build --platform android --profile production
+   ```
 
 ## Windows Dev Note
 
