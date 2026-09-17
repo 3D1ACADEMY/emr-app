@@ -80,6 +80,16 @@ export default function HomeScreen({ navigation }) {
             label="Patient"
             onPress={() => navigation.navigate('Patient')}
           />
+          <ToolButton
+            icon="calculator"
+            label="Calculators"
+            onPress={() => navigation.navigate('Calculator')}
+          />
+          <ToolButton
+            icon="face-recognition"
+            label="Danger Zones"
+            onPress={() => navigation.navigate('DangerZoneAtlas')}
+          />
         </View>
 
         {/* Stats / Recent */}

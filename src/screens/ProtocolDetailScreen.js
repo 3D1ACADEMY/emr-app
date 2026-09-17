@@ -4,11 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING, SHADOWS } from '../constants/theme';
 import ChecklistItem from '../components/ChecklistItem';
+import PremiumContentGate from '../components/PremiumContentGate';
 import { generateId } from '../utils/helpers';
 import { storage } from '../utils/storage';
 
-export default function ProtocolDetailScreen({ route, navigation }) {
-  const { protocol } = route.params;
+function ProtocolContent({ protocol, navigation }) {
   const [checkedItems, setCheckedItems] = useState({});
   const [incidentId, setIncidentId] = useState(null);
 
@@ -82,6 +82,23 @@ export default function ProtocolDetailScreen({ route, navigation }) {
       </ScrollView>
     </SafeAreaView>
   );
+}
+
+export default function ProtocolDetailScreen({ route, navigation }) {
+  const { protocol } = route.params;
+
+  if (protocol.premium) {
+    return (
+      <PremiumContentGate
+        title={`${protocol.title} — Course Content`}
+        description="This advanced protocol is unlocked with a 3D Rejuvenation Academy course code."
+      >
+        <ProtocolContent protocol={protocol} navigation={navigation} />
+      </PremiumContentGate>
+    );
+  }
+
+  return <ProtocolContent protocol={protocol} navigation={navigation} />;
 }
 
 const styles = StyleSheet.create({

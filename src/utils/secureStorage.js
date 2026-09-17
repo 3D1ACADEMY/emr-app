@@ -8,7 +8,10 @@ const KEYS = {
   DISCLAIMER_ACCEPTED: '@emr_secure_disclaimer_accepted',
   PIN_HASH: '@emr_secure_pin_hash',
   PIN_SALT: '@emr_secure_pin_salt',
+  UNLOCK_CODE: '@emr_secure_unlock_code',
 };
+
+export const VALID_UNLOCK_CODES = ['3DREJUV2026', 'MASTERCLASS'];
 
 const OPTIONS = {
   keychainService: 'com.3drejuvenation.emr',
@@ -203,6 +206,30 @@ export async function validatePin(pin) {
     `${pin}:${saltHex}`
   );
   return inputHash === storedHash;
+}
+
+// -------------------- Premium Unlock Codes --------------------
+
+export async function isContentUnlocked() {
+  const code = await getItem(KEYS.UNLOCK_CODE);
+  return VALID_UNLOCK_CODES.includes(code);
+}
+
+export async function getStoredUnlockCode() {
+  return await getItem(KEYS.UNLOCK_CODE);
+}
+
+export async function validateUnlockCode(code) {
+  const normalized = code?.trim().toUpperCase();
+  if (VALID_UNLOCK_CODES.includes(normalized)) {
+    await setItem(KEYS.UNLOCK_CODE, normalized);
+    return true;
+  }
+  return false;
+}
+
+export async function clearUnlockCode() {
+  await removeItem(KEYS.UNLOCK_CODE);
 }
 
 // -------------------- Migration / Clear --------------------

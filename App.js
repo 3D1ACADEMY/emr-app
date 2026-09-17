@@ -13,6 +13,8 @@ import ProtocolDetailScreen from './src/screens/ProtocolDetailScreen';
 import PatientScreen from './src/screens/PatientScreen';
 import TimerScreen from './src/screens/TimerScreen';
 import IncidentLogScreen from './src/screens/IncidentLogScreen';
+import CalculatorScreen from './src/screens/CalculatorScreen';
+import DangerZoneAtlasScreen from './src/screens/DangerZoneAtlasScreen';
 import SecurityGate from './src/components/SecurityGate';
 import DisclaimerModal from './src/components/DisclaimerModal';
 import { COLORS } from './src/constants/theme';
@@ -87,6 +89,16 @@ export default function App() {
                 name="IncidentLog"
                 component={IncidentLogScreen}
                 options={{ title: 'Incident Log' }}
+              />
+              <Stack.Screen
+                name="Calculator"
+                component={CalculatorScreen}
+                options={{ title: 'Clinical Calculators' }}
+              />
+              <Stack.Screen
+                name="DangerZoneAtlas"
+                component={DangerZoneAtlasScreen}
+                options={{ title: 'Danger Zone Atlas' }}
               />
             </Stack.Navigator>
           </NavigationContainer>

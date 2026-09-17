@@ -22,8 +22,14 @@ export default function ProtocolCard({ protocol, onPress }) {
             </View>
           </View>
           <Text style={styles.description}>{protocol.description}</Text>
+          {protocol.premium && (
+            <View style={styles.premiumRow}>
+              <Icon name="lock" size={12} color={COLORS.gold} />
+              <Text style={styles.premiumText}>Course unlock required</Text>
+            </View>
+          )}
         </View>
-        <Icon name="chevron-right" size={24} color={COLORS.gold} />
+        <Icon name={protocol.premium ? 'lock' : 'chevron-right'} size={24} color={COLORS.gold} />
       </View>
     </TouchableOpacity>
   );
@@ -81,5 +87,16 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     fontSize: SIZES.sm,
     lineHeight: 18,
+  },
+  premiumRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+  },
+  premiumText: {
+    color: COLORS.gold,
+    fontSize: SIZES.xs,
+    fontWeight: '700',
+    marginLeft: 4,
   },
 });

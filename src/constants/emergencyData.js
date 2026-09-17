@@ -148,6 +148,23 @@ export const PROTOCOLS = {
       { id: 'nt-5', text: 'Document with photos and schedule follow-up.', critical: false },
     ],
   },
+  complexVORescue: {
+    id: 'complex-vo-rescue',
+    title: 'Complex VO Rescue',
+    icon: 'skull-crossbones',
+    color: '#7f1d1d',
+    badge: 'MASTERCLASS',
+    premium: true,
+    description: 'Advanced vascular occlusion rescue protocol for refractory or delayed cases.',
+    steps: [
+      { id: 'cvo-1', text: 'Escalate immediately: high-dose hyaluronidase (600+ IU) across multiple planes and access points.', critical: true },
+      { id: 'cvo-2', text: 'Add intra-arterial thrombolysis protocol if available within 4-6 hours of onset.', critical: true },
+      { id: 'cvo-3', text: 'Hyperbaric oxygen therapy consult for threatened tissue.', critical: false },
+      { id: 'cvo-4', text: 'High-resolution Doppler ultrasound to map flow and guide reversal.', critical: false },
+      { id: 'cvo-5', text: 'Continuous monitoring, photograph timeline, and urgent specialist referral.', critical: true },
+      { id: 'cvo-6', text: 'Document all interventions with exact timestamps for medicolegal review.', critical: false },
+    ],
+  },
 };
 
 export const HYALURONIDASE_ZONES = [
