@@ -15,14 +15,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
-import {
-  ExpoSpeechRecognitionModule,
-  useSpeechRecognitionEvent,
-} from 'expo-speech-recognition';
+import { Audio } from 'expo-av';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING, SHADOWS } from '../constants/theme';
 import { INCIDENT_FIELDS } from '../constants/emergencyData';
-import { storage } from '../utils/storage';
+import { getIncidents, saveIncident, deleteIncident } from '../utils/secureStorage';
 import { formatDate, generateId } from '../utils/helpers';
 
 export default function IncidentLogScreen({ route }) {
@@ -31,10 +28,9 @@ export default function IncidentLogScreen({ route }) {
   const [selected, setSelected] = useState(null);
   const [form, setForm] = useState({});
 
-  // Voice state
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  const [voiceSupported, setVoiceSupported] = useState(false);
+  // Audio recording state
+  const [recording, setRecording] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
 
   // Camera state
   const [cameraVisible, setCameraVisible] = useState(false);
@@ -44,34 +40,15 @@ export default function IncidentLogScreen({ route }) {
 
   useEffect(() => {
     loadIncidents();
-    checkVoiceSupport();
+    return () => {
+      if (recording) {
+        recording.stopAndUnloadAsync().catch(() => {});
+      }
+    };
   }, []);
 
-  const checkVoiceSupport = async () => {
-    try {
-      const supported = await ExpoSpeechRecognitionModule.isRecognitionAvailable();
-      setVoiceSupported(supported);
-    } catch {
-      setVoiceSupported(false);
-    }
-  };
-
-  useSpeechRecognitionEvent('result', (event) => {
-    const text = event.results?.[0]?.transcript || '';
-    setTranscript(text);
-  });
-
-  useSpeechRecognitionEvent('end', () => {
-    setIsListening(false);
-  });
-
-  useSpeechRecognitionEvent('error', (event) => {
-    setIsListening(false);
-    Alert.alert('Dictation Error', event.message || 'Could not transcribe speech.');
-  });
-
   const loadIncidents = async () => {
-    const data = await storage.getIncidents();
+    const data = await getIncidents();
     setIncidents(data.reverse());
     if (prefillId) {
       const found = data.find((i) => i.id === prefillId);
@@ -89,7 +66,7 @@ export default function IncidentLogScreen({ route }) {
       updatedAt: Date.now(),
       status: 'completed',
     };
-    await storage.saveIncident(incident);
+    await saveIncident(incident);
     await loadIncidents();
     setSelected(null);
     setForm({});
@@ -116,50 +93,58 @@ export default function IncidentLogScreen({ route }) {
     setForm((prev) => ({ ...prev, [fieldId]: value }));
   };
 
-  // -------------------- Voice Dictation --------------------
+  // -------------------- Audio Notes --------------------
 
-  const toggleDictation = async () => {
-    if (isListening) {
-      try {
-        await ExpoSpeechRecognitionModule.stop();
-      } catch {
-        // ignore
-      }
-      setIsListening(false);
-      return;
-    }
-
+  const startRecording = async () => {
     try {
-      const { status } = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+      const { status } = await Audio.requestPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Required', 'Microphone access is needed for dictation.');
+        Alert.alert('Permission Required', 'Microphone access is needed for audio notes.');
         return;
       }
 
-      setTranscript('');
-      setIsListening(true);
-      await ExpoSpeechRecognitionModule.start({
-        lang: 'en-US',
-        interimResults: true,
-        maxAlternatives: 1,
-        continuous: true,
-        requiresOnDeviceRecognition: false,
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
       });
+
+      const { recording: newRecording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(newRecording);
+      setIsRecording(true);
     } catch (e) {
-      setIsListening(false);
-      Alert.alert('Dictation Error', e.message || 'Failed to start speech recognition.');
+      Alert.alert('Recording Error', e.message || 'Could not start audio recording.');
     }
   };
 
-  const appendTranscript = () => {
-    if (!transcript.trim()) return;
-    const note = `[${new Date().toLocaleString()}] ${transcript.trim()}`;
-    const current = form.voiceNotes || [];
-    setForm((prev) => ({
-      ...prev,
-      voiceNotes: [...current, note],
-    }));
-    setTranscript('');
+  const stopRecording = async () => {
+    if (!recording) return;
+    setIsRecording(false);
+    try {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      const incidentId = selected?.id || generateId('I');
+      const dir = `${FileSystem.documentDirectory}audio/`;
+      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+      const permanentUri = `${dir}${incidentId}_${Date.now()}.m4a`;
+      await FileSystem.moveAsync({ from: uri, to: permanentUri });
+
+      const note = {
+        uri: permanentUri,
+        capturedAt: Date.now(),
+      };
+      const current = form.voiceNotes || [];
+      setForm((prev) => ({
+        ...prev,
+        voiceNotes: [...current, note],
+      }));
+      Alert.alert('Audio Saved', 'Voice note attached to incident.');
+    } catch (e) {
+      Alert.alert('Recording Error', e.message || 'Could not save audio note.');
+    } finally {
+      setRecording(null);
+    }
   };
 
   // -------------------- Camera / Photos --------------------
@@ -290,42 +275,26 @@ export default function IncidentLogScreen({ route }) {
               </View>
             ))}
 
-            {/* Voice Dictation */}
+            {/* Audio Notes */}
             <View style={styles.mediaSection}>
-              <Text style={styles.mediaTitle}>Voice Notes</Text>
-              {voiceSupported ? (
-                <>
-                  <TouchableOpacity
-                    style={[styles.mediaButton, isListening && styles.mediaButtonActive]}
-                    onPress={toggleDictation}
-                    activeOpacity={0.8}
-                  >
-                    <Icon name={isListening ? 'microphone' : 'microphone-outline'} size={20} color={isListening ? COLORS.danger : COLORS.gold} />
-                    <Text style={[styles.mediaButtonText, isListening && { color: COLORS.danger }]}>
-                      {isListening ? 'Listening... Tap to stop' : 'Dictate Note'}
-                    </Text>
-                  </TouchableOpacity>
-
-                  {isListening && transcript.length > 0 && (
-                    <View style={styles.transcriptBox}>
-                      <Text style={styles.transcriptText}>{transcript}</Text>
-                    </View>
-                  )}
-
-                  {transcript.length > 0 && !isListening && (
-                    <TouchableOpacity style={styles.appendButton} onPress={appendTranscript}>
-                      <Text style={styles.appendButtonText}>Append Transcript</Text>
-                    </TouchableOpacity>
-                  )}
-                </>
-              ) : (
-                <Text style={styles.unsupportedText}>Speech recognition not available on this device.</Text>
-              )}
+              <Text style={styles.mediaTitle}>Audio Notes</Text>
+              <TouchableOpacity
+                style={[styles.mediaButton, isRecording && styles.mediaButtonActive]}
+                onPress={isRecording ? stopRecording : startRecording}
+                activeOpacity={0.8}
+              >
+                <Icon name={isRecording ? 'stop' : 'microphone-outline'} size={20} color={isRecording ? COLORS.danger : COLORS.gold} />
+                <Text style={[styles.mediaButtonText, isRecording && { color: COLORS.danger }]}>
+                  {isRecording ? 'Recording... Tap to stop' : 'Record Audio Note'}
+                </Text>
+              </TouchableOpacity>
 
               {(form.voiceNotes || []).map((note, index) => (
                 <View key={index} style={styles.noteItem}>
                   <Icon name="microphone" size={16} color={COLORS.gold} />
-                  <Text style={styles.noteText} numberOfLines={2}>{note}</Text>
+                  <Text style={styles.noteText} numberOfLines={2}>
+                    {formatDate(note.capturedAt)}
+                  </Text>
                   <TouchableOpacity onPress={() => removeVoiceNote(index)}>
                     <Icon name="close-circle" size={20} color={COLORS.danger} />
                   </TouchableOpacity>

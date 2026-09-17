@@ -56,8 +56,7 @@ The production profile in `eas.json` is configured for store submission:
       },
       "android": {
         "buildType": "app-bundle"
-      },
-      "ios": {}
+      }
     }
   },
   "submit": {
@@ -66,8 +65,7 @@ The production profile in `eas.json` is configured for store submission:
         "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID",
         "ascApiKeyPath": "./AuthKey_YOURKEY.p8",
         "ascApiKeyIssuerId": "YOUR_ISSUER_ID",
-        "ascApiKeyId": "YOUR_KEY_ID",
-        "ascTeamId": "YOUR_TEAM_ID"
+        "ascApiKeyId": "YOUR_KEY_ID"
       },
       "android": {
         "serviceAccountKeyPath": "./google-service-account-key.json",
@@ -93,7 +91,7 @@ Key declarations:
 - Collected data types:
   - Health (patient context / incident logs)
   - Photos or Videos (incident documentation)
-  - Audio Data (voice dictation)
+  - Audio Data (audio notes)
   - Precise Location (emergency facility locator)
   - Name (patient name stored locally)
 - All linked to `NSPrivacyCollectedDataTypePurposeAppFunctionality` only
@@ -131,7 +129,7 @@ In the Google Play Console, complete the **Data safety** section with the follow
 
 ### Additional Data Safety statements to paste
 
-> This app is designed for licensed aesthetic medical professionals. It operates entirely offline. Patient information, incident logs, photos, voice notes, and location data are stored locally on the device and encrypted at rest using the device's secure hardware-backed keystore. No data is collected, shared, or used for advertising or tracking.
+> This app is designed for licensed aesthetic medical professionals. It operates entirely offline. Patient information, incident logs, photos, audio notes, and location data are stored locally on the device and encrypted at rest using the device's secure hardware-backed keystore. No data is collected, shared, or used for advertising or tracking.
 
 ---
 
