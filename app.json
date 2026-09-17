@@ -22,7 +22,8 @@
       "infoPlist": {
         "NSFaceIDUsageDescription": "Authenticate to access confidential clinical emergency data.",
         "NSSpeechRecognitionUsageDescription": "Allow EMR to transcribe your dictated clinical notes.",
-        "NSMicrophoneUsageDescription": "Allow EMR to record your voice for dictated notes."
+        "NSMicrophoneUsageDescription": "Allow EMR to record your voice for dictated notes.",
+        "NSLocationWhenInUseUsageDescription": "Allow EMR to find the nearest emergency facilities."
       }
     },
     "android": {
@@ -34,7 +35,9 @@
       },
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ]
     },
     "web": {

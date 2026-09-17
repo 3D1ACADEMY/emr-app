@@ -90,6 +90,11 @@ export default function HomeScreen({ navigation }) {
             label="Danger Zones"
             onPress={() => navigation.navigate('DangerZoneAtlas')}
           />
+          <ToolButton
+            icon="map-marker-radius"
+            label="Facilities"
+            onPress={() => navigation.navigate('FacilityLocator')}
+          />
         </View>
 
         {/* Stats / Recent */}

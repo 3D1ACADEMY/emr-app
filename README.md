@@ -27,6 +27,7 @@ Cross-platform iOS/Android emergency response app designed for use during aesthe
 - ⚠️ **Medico-legal disclaimer** gating on first launch
 - 📈 **Clinical calculators**: Botulinum Toxin & Local Anesthetic max dose
 - 🧠 **Danger Zone Atlas**: interactive facial map with artery info
+- 🗺️ **Emergency Facility Locator**: offline hospital/HBOT list with distance + call button
 - 🔒 **Premium content gate**: course unlock codes for advanced protocols
 - ☁️ **Offline-first** local storage on device
 - 📱 **EAS Build ready** for iOS/Android store submission

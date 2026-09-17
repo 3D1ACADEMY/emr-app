@@ -1,0 +1,152 @@
+{
+  "defaultCity": {
+    "name": "Dubai",
+    "latitude": 25.2048,
+    "longitude": 55.2708
+  },
+  "facilities": [
+    {
+      "id": "fac-001",
+      "name": "American Hospital Dubai",
+      "type": "Hospital",
+      "address": "19th Street, Oud Metha, Dubai, UAE",
+      "phone": "+971-4-336-7777",
+      "latitude": 25.2356,
+      "longitude": 55.3276,
+      "city": "Dubai",
+      "services": ["Emergency Medicine", "Plastic Surgery", "Dermatology"]
+    },
+    {
+      "id": "fac-002",
+      "name": "Mediclinic City Hospital",
+      "type": "Hospital",
+      "address": "Dubai Healthcare City, Dubai, UAE",
+      "phone": "+971-4-435-9999",
+      "latitude": 25.2279,
+      "longitude": 55.3223,
+      "city": "Dubai",
+      "services": ["24/7 Emergency", "Vascular Surgery", "Hyperbaric Oxygen"]
+    },
+    {
+      "id": "fac-003",
+      "name": "Dubai London Clinic & Specialty Hospital",
+      "type": "Hospital",
+      "address": "Jumeirah Beach Road, Dubai, UAE",
+      "phone": "+971-4-344-9999",
+      "latitude": 25.2142,
+      "longitude": 55.2626,
+      "city": "Dubai",
+      "services": ["Emergency", "Aesthetic Medicine Support"]
+    },
+    {
+      "id": "fac-004",
+      "name": "Emirates Hospital Jumeirah",
+      "type": "Hospital",
+      "address": "Jumeirah Beach Road, Dubai, UAE",
+      "phone": "+971-4-344-7333",
+      "latitude": 25.2014,
+      "longitude": 55.2654,
+      "city": "Dubai",
+      "services": ["Emergency", "Plastic Surgery"]
+    },
+    {
+      "id": "fac-005",
+      "name": "London Hyperbaric Medicine",
+      "type": "HBOT Center",
+      "address": "The Wellington Hospital, Wellington Place, London, UK",
+      "phone": "+44-20-7581-4488",
+      "latitude": 51.5203,
+      "longitude": -0.1567,
+      "city": "London",
+      "services": ["Hyperbaric Oxygen Therapy", "Wound Care"]
+    },
+    {
+      "id": "fac-006",
+      "name": "Chelsea & Westminster Hospital",
+      "type": "Hospital",
+      "address": "369 Fulham Road, London, UK",
+      "phone": "+44-20-3315-8000",
+      "latitude": 51.4836,
+      "longitude": -0.1811,
+      "city": "London",
+      "services": ["A&E", "Plastic Surgery", "Dermatology"]
+    },
+    {
+      "id": "fac-007",
+      "name": "NewYork-Presbyterian/Weill Cornell",
+      "type": "Hospital",
+      "address": "525 East 68th Street, New York, NY, USA",
+      "phone": "+1-212-746-5454",
+      "latitude": 40.7643,
+      "longitude": -73.9548,
+      "city": "New York",
+      "services": ["Emergency Medicine", "Vascular Surgery"]
+    },
+    {
+      "id": "fac-008",
+      "name": "Lenox Hill Hospital",
+      "type": "Hospital",
+      "address": "100 East 77th Street, New York, NY, USA",
+      "phone": "+1-212-434-2000",
+      "latitude": 40.7739,
+      "longitude": -73.9609,
+      "city": "New York",
+      "services": ["Emergency", "Plastic Surgery"]
+    },
+    {
+      "id": "fac-009",
+      "name": "Cedars-Sinai Medical Center",
+      "type": "Hospital",
+      "address": "8700 Beverly Boulevard, Los Angeles, CA, USA",
+      "phone": "+1-310-423-3277",
+      "latitude": 34.0752,
+      "longitude": -118.3805,
+      "city": "Los Angeles",
+      "services": ["Emergency", "Plastic Surgery", "Dermatology"]
+    },
+    {
+      "id": "fac-010",
+      "name": "Ronald Reagan UCLA Medical Center",
+      "type": "Hospital",
+      "address": "757 Westwood Plaza, Los Angeles, CA, USA",
+      "phone": "+1-310-825-9111",
+      "latitude": 34.0662,
+      "longitude": -118.4455,
+      "city": "Los Angeles",
+      "services": ["Level 1 Trauma", "Vascular Surgery"]
+    },
+    {
+      "id": "fac-011",
+      "name": "Acıbadem Fulya Hospital",
+      "type": "Hospital",
+      "address": "Teşvikiye, Şişli, Istanbul, Turkey",
+      "phone": "+90-212-444-2555",
+      "latitude": 41.0509,
+      "longitude": 28.9959,
+      "city": "Istanbul",
+      "services": ["Emergency", "Plastic & Reconstructive Surgery"]
+    },
+    {
+      "id": "fac-012",
+      "name": "Bangkok Hospital",
+      "type": "Hospital",
+      "address": "2 Soi Soonvijai 7, New Petchburi Road, Bangkok, Thailand",
+      "phone": "+66-2-310-3000",
+      "latitude": 13.7437,
+      "longitude": 100.5856,
+      "city": "Bangkok",
+      "services": ["24/7 Emergency", "Plastic Surgery"]
+    },
+    {
+      "id": "fac-013",
+      "name": "Gleneagles Hospital Singapore",
+      "type": "Hospital",
+      "address": "6A Napier Road, Singapore",
+      "phone": "+65-6470-5600",
+      "latitude": 1.3074,
+      "longitude": 103.8198,
+      "city": "Singapore",
+      "services": ["Emergency", "Plastic Surgery", "Dermatology"]
+    }
+  ]
+}
