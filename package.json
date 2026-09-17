@@ -40,7 +40,8 @@
     "react-native-web": "~0.19.6",
     "uuid": "^9.0.1",
     "expo-location": "~16.1.0",
-    "@react-native-community/netinfo": "9.3.10"
+    "@react-native-community/netinfo": "9.3.10",
+    "expo-updates": "~0.18.19"
   },
   "devDependencies": {
     "@babel/cli": "^7.29.7",

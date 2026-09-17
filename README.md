@@ -38,7 +38,8 @@ Cross-platform iOS/Android emergency response app designed for use during aesthe
 - Expo SDK 49
 - React Navigation
 - React Native Paper
-- AsyncStorage
+- expo-secure-store
+- expo-local-authentication
 
 ## Getting Started
 
@@ -107,6 +108,10 @@ EMR-App/
 │   └── utils/                   # Storage & helpers
 └── assets/                    # Icons, splash, branding
 ```
+
+## Store Submission
+
+See [`STORE_SUBMISSION.md`](./STORE_SUBMISSION.md) for the complete App Store / Play Store checklist, EAS credentials setup, iOS Privacy Manifest, and Google Play Data Safety answers.
 
 ## Brand
 

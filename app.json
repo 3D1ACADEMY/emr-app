@@ -15,9 +15,15 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/989c7323-bfdf-42ec-83b6-841f43e7ad4b"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.3drejuvenation.emr",
+      "bundleIdentifier": "com.rejuvenation.emr",
       "buildNumber": "1.0.0",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Authenticate to access confidential clinical emergency data.",
