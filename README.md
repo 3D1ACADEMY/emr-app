@@ -22,7 +22,7 @@ Cross-platform iOS/Android emergency response app designed for use during aesthe
 - ⏱️ **Treatment timer** with vibration alerts and quick presets
 - 🔒 **Biometric lock** with Face ID / Touch ID + 4-digit PIN fallback
 - 👤 **Patient context** storage for allergies, meds, weight
-- 📋 **Incident log** with timestamped documentation and report preview
+- 📋 **Incident log** with voice dictation, photo attachments, and report preview
 - 🔐 **Encrypted at rest** via `expo-secure-store`
 - ⚠️ **Medico-legal disclaimer** gating on first launch
 - 📈 **Clinical calculators**: Botulinum Toxin & Local Anesthetic max dose

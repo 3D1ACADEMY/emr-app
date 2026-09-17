@@ -20,7 +20,9 @@
       "bundleIdentifier": "com.3drejuvenation.emr",
       "buildNumber": "1.0.0",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Authenticate to access confidential clinical emergency data."
+        "NSFaceIDUsageDescription": "Authenticate to access confidential clinical emergency data.",
+        "NSSpeechRecognitionUsageDescription": "Allow EMR to transcribe your dictated clinical notes.",
+        "NSMicrophoneUsageDescription": "Allow EMR to record your voice for dictated notes."
       }
     },
     "android": {
@@ -45,7 +47,8 @@
         {
           "cameraPermission": "Allow EMR to access your camera to document emergency incidents."
         }
-      ]
+      ],
+      "expo-speech-recognition"
     ],
     "extra": {
       "eas": {
