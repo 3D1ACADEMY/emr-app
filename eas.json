@@ -21,9 +21,6 @@
       },
       "android": {
         "buildType": "app-bundle"
-      },
-      "ios": {
-        "enterpriseProvisioning": null
       }
     }
   },
@@ -33,8 +30,7 @@
         "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID",
         "ascApiKeyPath": "./AuthKey_YOURKEY.p8",
         "ascApiKeyIssuerId": "YOUR_ISSUER_ID",
-        "ascApiKeyId": "YOUR_KEY_ID",
-        "ascTeamId": "YOUR_TEAM_ID"
+        "ascApiKeyId": "YOUR_KEY_ID"
       },
       "android": {
         "serviceAccountKeyPath": "./google-service-account-key.json",
