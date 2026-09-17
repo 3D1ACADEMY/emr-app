@@ -67,6 +67,13 @@ npx expo export --platform web
 ```
 Produces a working static bundle in `dist/`.
 
+## Latest Preview APK
+
+**CEMS-EMERGENCY.APK** (Android preview build)
+- Download: https://expo.dev/artifacts/eas/169n9UjPuWPD_uFeVtIc4FBAjxVbgclZ-gfXnI8qT-M.apk
+- Size: ~33 MB
+- Build ID: `6cfd71c4-2b4b-4c42-aaa4-8ada3bff6a6b`
+
 ## EAS Build (iOS/Android store binaries)
 
 1. Create Expo account at https://expo.dev
