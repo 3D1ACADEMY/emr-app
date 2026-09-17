@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import * as Crypto from 'expo-crypto';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const KEYS = {
   PATIENT_IDS: '@emr_secure_patient_ids',
@@ -162,14 +163,42 @@ export async function saveChecklistState(incidentId, state) {
 }
 
 // -------------------- Disclaimer --------------------
+// Disclaimer acceptance is not PHI. We try SecureStore first for consistency,
+// but fall back to AsyncStorage on Android devices where SecureStore hangs/fails.
+
+const ASYNC_DISCLAIMER_KEY = '@emr_disclaimer_accepted';
 
 export async function hasAcceptedDisclaimer() {
-  const value = await getItem(KEYS.DISCLAIMER_ACCEPTED);
-  return value === 'true';
+  try {
+    const value = await getItem(KEYS.DISCLAIMER_ACCEPTED);
+    if (value === 'true') return true;
+  } catch (e) {
+    console.warn('SecureStore disclaimer read failed, trying AsyncStorage:', e.message);
+  }
+
+  try {
+    const value = await AsyncStorage.getItem(ASYNC_DISCLAIMER_KEY);
+    return value === 'true';
+  } catch (e) {
+    console.error('AsyncStorage disclaimer read failed:', e);
+    return false;
+  }
 }
 
 export async function setDisclaimerAccepted(accepted) {
-  await setItem(KEYS.DISCLAIMER_ACCEPTED, accepted ? 'true' : 'false');
+  const value = accepted ? 'true' : 'false';
+  try {
+    await setItem(KEYS.DISCLAIMER_ACCEPTED, value);
+  } catch (e) {
+    console.warn('SecureStore disclaimer write failed, falling back to AsyncStorage:', e.message);
+  }
+
+  try {
+    await AsyncStorage.setItem(ASYNC_DISCLAIMER_KEY, value);
+  } catch (e) {
+    console.error('AsyncStorage disclaimer write failed:', e);
+    throw e;
+  }
 }
 
 // -------------------- PIN --------------------
