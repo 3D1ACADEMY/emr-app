@@ -1,9 +1,10 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
+import { useRef } from 'react';
 
 import HomeScreen from './src/screens/HomeScreen';
 import EmergencyScreen from './src/screens/EmergencyScreen';
@@ -21,6 +22,7 @@ import DisclaimerModal from './src/components/DisclaimerModal';
 import { COLORS } from './src/constants/theme';
 
 const Stack = createNativeStackNavigator();
+const navigationRef = createNavigationContainerRef();
 
 const theme = {
   colors: {
@@ -40,8 +42,8 @@ export default function App() {
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
         <SecurityGate>
-          <DisclaimerModal />
-          <NavigationContainer>
+          <DisclaimerModal navigation={navigationRef} />
+          <NavigationContainer ref={navigationRef}>
             <StatusBar style="light" />
             <Stack.Navigator
               screenOptions={{

@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { COLORS, SIZES, SPACING, SHADOWS } from '../constants/theme';
 import { hasAcceptedDisclaimer, setDisclaimerAccepted } from '../utils/secureStorage';
@@ -28,25 +30,56 @@ By using this app, you acknowledge and agree that:
 
 Tap "I Agree" only if you are a qualified medical professional and accept full responsibility for clinical decisions.`;
 
-export default function DisclaimerModal({ disclaimerText = DEFAULT_DISCLAIMER }) {
+export default function DisclaimerModal({ disclaimerText = DEFAULT_DISCLAIMER, navigation }) {
   const [visible, setVisible] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     checkDisclaimer();
   }, []);
 
   const checkDisclaimer = async () => {
-    const accepted = await hasAcceptedDisclaimer();
-    if (!accepted) {
+    try {
+      const accepted = await hasAcceptedDisclaimer();
+      if (!accepted) {
+        setVisible(true);
+      }
+    } catch (e) {
+      console.error('Disclaimer check error:', e);
       setVisible(true);
     }
   };
 
   const handleAgree = async () => {
     if (!agreed) return;
-    await setDisclaimerAccepted(true);
-    setVisible(false);
+
+    setIsSaving(true);
+    console.log('I Agree pressed — saving disclaimer acceptance...');
+
+    try {
+      await setDisclaimerAccepted(true);
+      console.log('Disclaimer acceptance saved to SecureStore.');
+      console.log('Navigating to dashboard...');
+
+      setVisible(false);
+
+      // If a navigation ref was passed, reset to Home so the user cannot go back.
+      if (navigation?.current?.reset) {
+        navigation.current.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
+      }
+    } catch (e) {
+      console.error('Failed to save disclaimer acceptance:', e);
+      Alert.alert(
+        'Could Not Save Agreement',
+        'Please try again. If this keeps happening, check that your device has screen lock / secure storage enabled.'
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -81,12 +114,19 @@ export default function DisclaimerModal({ disclaimerText = DEFAULT_DISCLAIMER })
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.agreeButton, !agreed && styles.agreeButtonDisabled]}
+            style={[
+              styles.agreeButton,
+              (!agreed || isSaving) && styles.agreeButtonDisabled,
+            ]}
             onPress={handleAgree}
-            disabled={!agreed}
+            disabled={!agreed || isSaving}
             activeOpacity={0.8}
           >
-            <Text style={styles.agreeButtonText}>I Agree</Text>
+            {isSaving ? (
+              <ActivityIndicator color={COLORS.textInverse} />
+            ) : (
+              <Text style={styles.agreeButtonText}>I Agree</Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </View>

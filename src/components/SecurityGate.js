@@ -72,8 +72,13 @@ export default function SecurityGate({ children }) {
       setError('PINs do not match.');
       return;
     }
-    await setPin(pin);
-    setIsAuthenticated(true);
+    try {
+      await setPin(pin);
+      setIsAuthenticated(true);
+    } catch (e) {
+      console.error('PIN setup error:', e);
+      setError('Could not save PIN. Check device security settings.');
+    }
   };
 
   const handleUnlockPin = async () => {
@@ -82,12 +87,17 @@ export default function SecurityGate({ children }) {
       setError('Enter 4-digit PIN.');
       return;
     }
-    const valid = await validatePin(pin);
-    if (valid) {
-      setIsAuthenticated(true);
-    } else {
-      setError('Incorrect PIN.');
-      setPin('');
+    try {
+      const valid = await validatePin(pin);
+      if (valid) {
+        setIsAuthenticated(true);
+      } else {
+        setError('Incorrect PIN.');
+        setPin('');
+      }
+    } catch (e) {
+      console.error('PIN unlock error:', e);
+      setError('Could not verify PIN. Try again.');
     }
   };
 

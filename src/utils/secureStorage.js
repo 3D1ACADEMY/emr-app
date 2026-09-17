@@ -14,7 +14,7 @@ const KEYS = {
 export const VALID_UNLOCK_CODES = ['3DREJUV2026', 'MASTERCLASS'];
 
 const OPTIONS = {
-  keychainService: 'com.3drejuvenation.emr',
+  keychainService: 'com.rejuvenation.emr',
   keychainAccessible: SecureStore.WHEN_UNLOCKED,
 };
 
