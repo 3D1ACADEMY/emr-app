@@ -12,3 +12,6 @@ web-build/
 .env
 .DS_Store
 APK
+*.apk
+*.APK
+CEMS-EMERGENCY.APK
