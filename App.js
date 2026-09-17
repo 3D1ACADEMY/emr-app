@@ -1,10 +1,9 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
-import { useRef } from 'react';
 
 import HomeScreen from './src/screens/HomeScreen';
 import EmergencyScreen from './src/screens/EmergencyScreen';
@@ -18,11 +17,10 @@ import CalculatorScreen from './src/screens/CalculatorScreen';
 import DangerZoneAtlasScreen from './src/screens/DangerZoneAtlasScreen';
 import FacilityLocatorScreen from './src/screens/FacilityLocatorScreen';
 import SecurityGate from './src/components/SecurityGate';
-import DisclaimerModal from './src/components/DisclaimerModal';
+import DisclaimerScreen from './src/screens/DisclaimerScreen';
 import { COLORS } from './src/constants/theme';
 
 const Stack = createNativeStackNavigator();
-const navigationRef = createNavigationContainerRef();
 
 const theme = {
   colors: {
@@ -42,8 +40,7 @@ export default function App() {
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
         <SecurityGate>
-          <DisclaimerModal navigation={navigationRef} />
-          <NavigationContainer ref={navigationRef}>
+          <NavigationContainer>
             <StatusBar style="light" />
             <Stack.Navigator
               screenOptions={{
@@ -53,6 +50,11 @@ export default function App() {
                 contentStyle: { backgroundColor: COLORS.background },
               }}
             >
+              <Stack.Screen
+                name="Disclaimer"
+                component={DisclaimerScreen}
+                options={{ headerShown: false }}
+              />
               <Stack.Screen
                 name="Home"
                 component={HomeScreen}
