@@ -20,8 +20,11 @@ Cross-platform iOS/Android emergency response app designed for use during aesthe
 - 🧫 **Procedure-Related Infection** antibiotic guidance
 - 🔹 **Filler Nodules / Tyndall Effect** management
 - ⏱️ **Treatment timer** with vibration alerts and quick presets
+- 🔒 **Biometric lock** with Face ID / Touch ID + 4-digit PIN fallback
 - 👤 **Patient context** storage for allergies, meds, weight
 - 📋 **Incident log** with timestamped documentation and report preview
+- 🔐 **Encrypted at rest** via `expo-secure-store`
+- ⚠️ **Medico-legal disclaimer** gating on first launch
 - ☁️ **Offline-first** local storage on device
 - 📱 **EAS Build ready** for iOS/Android store submission
 
