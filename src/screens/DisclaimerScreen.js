@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Checkbox, Button, Surface } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, SIZES, SPACING } from '../constants/theme';
-import { hasAcceptedDisclaimer, setDisclaimerAccepted } from '../utils/secureStorage';
+
+const HAS_AGREED_KEY = 'has_agreed_disclaimer';
 
 const DEFAULT_DISCLAIMER = `CLINICAL EMERGENCY MANAGEMENT SYSTEM (CEMS)
 
@@ -19,7 +29,9 @@ By using this app, you acknowledge and agree that:
 
 4. All patient information entered into this app is stored locally on your device using encryption. You are responsible for maintaining device security and compliance with applicable privacy laws (HIPAA, GDPR, etc.).
 
-5. This app does not sell products or provide medical advice. It is for educational and professional reference only.`;
+5. This app does not sell products or provide medical advice. It is for educational and professional reference only.
+
+Tap "I Agree" only if you are a qualified medical professional and accept full responsibility for clinical decisions.`;
 
 export default function DisclaimerScreen({ navigation, disclaimerText = DEFAULT_DISCLAIMER }) {
   const [agreed, setAgreed] = useState(false);
@@ -31,13 +43,13 @@ export default function DisclaimerScreen({ navigation, disclaimerText = DEFAULT_
 
   const checkPreviousAgreement = async () => {
     try {
-      const hasAgreed = await hasAcceptedDisclaimer();
-      if (hasAgreed) {
+      const hasAgreed = await AsyncStorage.getItem(HAS_AGREED_KEY);
+      if (hasAgreed === 'true') {
         console.log('Disclaimer already accepted — bypassing to Home.');
         navigation.replace('Home');
       }
     } catch (error) {
-      console.error('Error checking disclaimer agreement:', error);
+      console.error('Error checking AsyncStorage disclaimer agreement:', error);
     }
   };
 
@@ -48,11 +60,11 @@ export default function DisclaimerScreen({ navigation, disclaimerText = DEFAULT_
     }
 
     setLoading(true);
-    console.log('I Agree pressed — saving disclaimer acceptance...');
+    console.log('I Agree pressed — saving disclaimer acceptance to AsyncStorage...');
 
     try {
-      await setDisclaimerAccepted(true);
-      console.log('Disclaimer acceptance saved to SecureStore.');
+      await AsyncStorage.setItem(HAS_AGREED_KEY, 'true');
+      console.log('Disclaimer acceptance saved successfully.');
       console.log('Navigating to dashboard...');
 
       // Replace so the user cannot press back to return to the disclaimer.
@@ -61,7 +73,7 @@ export default function DisclaimerScreen({ navigation, disclaimerText = DEFAULT_
       console.error('Failed to save disclaimer agreement:', error);
       Alert.alert(
         'Could Not Save Agreement',
-        'Please try again. If this keeps happening, check that your device has screen lock / secure storage enabled.'
+        'Please try again. If this keeps happening, restart the app.'
       );
     } finally {
       setLoading(false);
@@ -101,7 +113,7 @@ export default function DisclaimerScreen({ navigation, disclaimerText = DEFAULT_
           contentStyle={styles.buttonContent}
           labelStyle={styles.buttonLabel}
         >
-          I Agree & Enter App
+          {loading ? 'Saving...' : 'I Agree & Enter App'}
         </Button>
       </Surface>
     </SafeAreaView>
