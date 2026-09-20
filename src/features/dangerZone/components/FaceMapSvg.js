@@ -11,81 +11,144 @@ import { COLORS, SPACING } from '../../../constants/theme';
 
 const VIEWBOX = { width: 300, height: 320 };
 
-function renderZoneShape(zone, isFrontal, selectedId, onSelect) {
+/**
+ * SVG path map for each zone id.
+ * Frontal and lateral arrays allow a zone to appear on one or both views.
+ */
+const ZONE_PATHS = {
+  supratrochlear: {
+    frontal: [
+      { path: 'M130,80 Q150,70 170,80 L165,105 Q150,112 135,105 Z', labelX: 150, labelY: 95 },
+    ],
+  },
+  supraorbital: {
+    frontal: [
+      { path: 'M85,118 Q105,112 125,118 L122,128 Q105,124 88,128 Z', labelX: 105, labelY: 123 },
+      { path: 'M175,118 Q195,112 215,118 L212,128 Q195,124 178,128 Z', labelX: 195, labelY: 123 },
+    ],
+  },
+  angular: {
+    frontal: [
+      { path: 'M125,135 Q140,165 145,200 L132,205 Q128,170 115,140 Z', labelX: 130, labelY: 170 },
+      { path: 'M175,135 Q160,165 155,200 L168,205 Q172,170 185,140 Z', labelX: 170, labelY: 170 },
+    ],
+  },
+  dorsalNasal: {
+    frontal: [
+      { path: 'M140,118 Q150,115 160,118 L155,170 Q150,178 145,170 Z', labelX: 150, labelY: 145 },
+    ],
+  },
+  frontalBranch: {
+    frontal: [
+      { path: 'M60,90 Q80,80 95,95 L90,135 Q70,145 58,130 Z', labelX: 78, labelY: 112 },
+      { path: 'M205,95 Q220,80 240,90 L242,130 Q230,145 210,135 Z', labelX: 222, labelY: 112 },
+    ],
+  },
+  deepTemporal: {
+    lateral: [
+      { path: 'M40,85 Q58,75 72,90 L68,130 Q52,138 42,125 Z', labelX: 58, labelY: 108 },
+    ],
+  },
+  infraorbital: {
+    frontal: [
+      { path: 'M118,145 Q135,140 148,145 L145,168 Q130,172 120,168 Z', labelX: 132, labelY: 158 },
+      { path: 'M152,145 Q165,140 182,145 L180,168 Q170,172 155,168 Z', labelX: 168, labelY: 158 },
+    ],
+  },
+  zygomaticofacial: {
+    frontal: [
+      { path: 'M90,165 Q115,155 130,180 L120,215 Q95,220 85,200 Z', labelX: 108, labelY: 190 },
+      { path: 'M170,180 Q185,155 210,165 L215,200 Q205,220 180,215 Z', labelX: 192, labelY: 190 },
+    ],
+  },
+  labial: {
+    frontal: [
+      { path: 'M110,205 Q150,195 190,205 Q150,228 110,215 Z', labelX: 150, labelY: 215 },
+    ],
+  },
+  mental: {
+    frontal: [
+      { path: 'M130,235 Q150,230 170,235 L165,260 Q150,268 135,260 Z', labelX: 150, labelY: 252 },
+    ],
+  },
+  submental: {
+    lateral: [
+      { path: 'M55,245 Q72,238 88,248 L82,275 Q68,282 56,270 Z', labelX: 72, labelY: 262 },
+    ],
+  },
+  transverseFacial: {
+    frontal: [
+      { path: 'M78,170 Q95,165 108,175 L102,195 Q88,200 78,190 Z', labelX: 92, labelY: 185 },
+      { path: 'M192,175 Q205,165 222,170 L222,190 Q212,200 198,195 Z', labelX: 208, labelY: 185 },
+    ],
+  },
+};
+
+function getRiskFill(tier, isSelected) {
+  const alpha = isSelected ? '70' : '40';
+  switch (tier) {
+    case 'critical':
+      return `${COLORS.danger}${alpha}`;
+    case 'high':
+      return `#E87C2B${alpha}`;
+    case 'moderate':
+      return `${COLORS.gold}${alpha}`;
+    default:
+      return `${COLORS.textMuted}${alpha}`;
+  }
+}
+
+function getRiskStroke(tier, isSelected) {
+  if (isSelected) return COLORS.gold;
+  switch (tier) {
+    case 'critical':
+      return COLORS.danger;
+    case 'high':
+      return '#E87C2B';
+    case 'moderate':
+      return COLORS.gold;
+    default:
+      return COLORS.textMuted;
+  }
+}
+
+function renderZoneShape(zone, paths, selectedId, onSelect) {
   const isSelected = selectedId === zone.id;
-  const fill = isSelected ? `${COLORS.danger}60` : `${COLORS.danger}30`;
-  const stroke = isSelected ? COLORS.gold : COLORS.danger;
+  const fill = getRiskFill(zone.riskTier, isSelected);
+  const stroke = getRiskStroke(zone.riskTier, isSelected);
   const strokeWidth = isSelected ? 2.5 : 1.5;
 
-  const hitProps = {
-    fill: 'transparent',
-    stroke: 'transparent',
-    strokeWidth: 12,
-    onPress: () => onSelect(zone),
-    accessibilityLabel: `${zone.name} — ${zone.region}, ${zone.riskTier} risk`,
-    accessibilityRole: 'button',
-  };
-
-  const shapeProps = {
-    fill,
-    stroke,
-    strokeWidth,
-    pointerEvents: 'none',
-  };
-
-  const path = isFrontal ? zone.frontalPath : zone.lateralPath;
-
-  if (path === 'ellipse' || zone.rx) {
-    const cx = isFrontal ? zone.cx : zone.cx - 60;
-    const cy = zone.cy;
-    const rx = (isFrontal ? zone.rx : zone.rx * 0.8) || 30;
-    const ry = (isFrontal ? zone.ry : zone.ry * 0.9) || 40;
-    const hitRx = rx + 14;
-    const hitRy = ry + 18;
-
-    return (
-      <G key={zone.id}>
-        <Ellipse cx={cx} cy={cy} rx={hitRx} ry={hitRy} {...hitProps} />
-        <Ellipse cx={cx} cy={cy} rx={rx} ry={ry} {...shapeProps} />
-        <SvgText
-          x={cx}
-          y={cy + 4}
-          fill={COLORS.textMuted}
-          fontSize="10"
-          fontWeight="600"
-          textAnchor="middle"
-          pointerEvents="none"
-        >
-          {zone.name}
-        </SvgText>
-      </G>
-    );
-  }
-
-  if (path) {
-    const hitPath = isFrontal ? zone.frontalHitPath : zone.lateralHitPath;
-    return (
-      <G key={zone.id}>
-        {hitPath && <Path d={hitPath} {...hitProps} />}
-        <Path d={path} {...shapeProps} />
-        {zone.cx && (
-          <SvgText
-            x={isFrontal ? zone.cx : zone.cx - 60}
-            y={(zone.cy || 0) + 4}
-            fill={COLORS.textMuted}
-            fontSize="10"
-            fontWeight="600"
-            textAnchor="middle"
-            pointerEvents="none"
-          >
-            {zone.name}
-          </SvgText>
-        )}
-      </G>
-    );
-  }
-
-  return null;
+  return paths.map((p, idx) => (
+    <G key={`${zone.id}-${idx}`}>
+      <Path
+        d={p.path}
+        fill="transparent"
+        stroke="transparent"
+        strokeWidth={18}
+        onPress={() => onSelect(zone)}
+        accessibilityLabel={`${zone.name} \u2014 ${zone.region}, ${zone.riskTier} risk`}
+        accessibilityRole="button"
+      />
+      <Path
+        d={p.path}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+        pointerEvents="none"
+      />
+      <SvgText
+        x={p.labelX}
+        y={p.labelY}
+        fill={COLORS.text}
+        fontSize="9"
+        fontWeight="700"
+        textAnchor="middle"
+        pointerEvents="none"
+      >
+        {zone.name}
+      </SvgText>
+    </G>
+  ));
 }
 
 function FaceMapSvgInner({ zones, orientation, selectedId, onSelect }, ref) {
@@ -143,11 +206,7 @@ function FaceMapSvgInner({ zones, orientation, selectedId, onSelect }, ref) {
     }
   };
 
-  const transform = [
-    { scale },
-    { translateX },
-    { translateY },
-  ];
+  const transform = [{ scale }, { translateX }, { translateY }];
 
   return (
     <View style={styles.container}>
@@ -227,7 +286,13 @@ function FaceMapSvgInner({ zones, orientation, selectedId, onSelect }, ref) {
                       </>
                     )}
 
-                    {zones.map((zone) => renderZoneShape(zone, isFrontal, selectedId, onSelect))}
+                    {zones.map((zone) => {
+                      const mapping = ZONE_PATHS[zone.id];
+                      if (!mapping) return null;
+                      const paths = isFrontal ? mapping.frontal : mapping.lateral;
+                      if (!paths) return null;
+                      return renderZoneShape(zone, paths, selectedId, onSelect);
+                    })}
                   </Svg>
                 </Animated.View>
               </PanGestureHandler>

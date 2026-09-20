@@ -16,7 +16,11 @@ import FaceMapSvg from '../features/dangerZone/components/FaceMapSvg';
 import ZoneList from '../features/dangerZone/components/ZoneList';
 import ZoneDetailSheet from '../features/dangerZone/components/ZoneDetailSheet';
 import AtlasErrorFallback from '../features/dangerZone/components/AtlasErrorFallback';
-import { DANGER_ZONES, oldestReviewDate } from '../features/dangerZone/data/zones';
+import {
+  DANGER_ZONES,
+  oldestReviewDate,
+  PROTOCOL_ROUTES,
+} from '../features/dangerZone/data/zones';
 
 function MapSection({ orientation, selectedId, onSelect }) {
   return (
@@ -49,7 +53,7 @@ export default function DangerZoneAtlasScreen({ navigation }) {
 
   const handleOpenProtocol = useCallback(() => {
     setSelectedZone(null);
-    navigation.navigate('VascularOcclusion');
+    navigation.navigate(PROTOCOL_ROUTES.vascularOcclusion);
   }, [navigation]);
 
   const handleOpenCalculator = useCallback(() => {

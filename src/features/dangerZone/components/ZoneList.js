@@ -34,7 +34,8 @@ export default function ZoneList({ zones, onSelect }) {
       (z) =>
         z.name.toLowerCase().includes(q) ||
         z.region.toLowerCase().includes(q) ||
-        z.parentVessel.toLowerCase().includes(q)
+        z.parentVessel.toLowerCase().includes(q) ||
+        z.aliases.some((a) => a.toLowerCase().includes(q))
     );
   }, [zones, query]);
 
