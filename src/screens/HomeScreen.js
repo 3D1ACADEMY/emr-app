@@ -5,11 +5,13 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING, SHADOWS } from '../constants/theme';
 import { storage } from '../utils/storage';
+import { isAtlasAvailable } from '../features/dangerZone/data/zones';
 
 export default function HomeScreen({ navigation }) {
   const [incidentCount, setIncidentCount] = useState(0);
@@ -88,7 +90,18 @@ export default function HomeScreen({ navigation }) {
           <ToolButton
             icon="face-recognition"
             label="Danger Zones"
-            onPress={() => navigation.navigate('DangerZoneAtlas')}
+            onPress={() => {
+              if (!isAtlasAvailable()) {
+                Alert.alert('Unavailable', 'The Danger Zone Atlas is not available right now.');
+                return;
+              }
+              try {
+                navigation.navigate('DangerZoneAtlas');
+              } catch (e) {
+                console.error('Danger Zone Atlas navigation failed:', e);
+                Alert.alert('Navigation Error', 'Could not open Danger Zone Atlas. Use the protocol list instead.');
+              }
+            }}
           />
           <ToolButton
             icon="map-marker-radius"
