@@ -38,11 +38,19 @@ export default function IncidentLogScreen({ route }) {
   const [photoLoading, setPhotoLoading] = useState(false);
   const cameraRef = useRef(null);
 
+  // Audio playback state
+  const [sound, setSound] = useState(null);
+  const [playingUri, setPlayingUri] = useState(null);
+  const [playbackStatus, setPlaybackStatus] = useState(null);
+
   useEffect(() => {
     loadIncidents();
     return () => {
       if (recording) {
         recording.stopAndUnloadAsync().catch(() => {});
+      }
+      if (sound) {
+        sound.unloadAsync().catch(() => {});
       }
     };
   }, []);
@@ -60,17 +68,22 @@ export default function IncidentLogScreen({ route }) {
   };
 
   const handleSave = async () => {
-    const incident = {
-      ...(selected || { id: generateId('I') }),
-      ...form,
-      updatedAt: Date.now(),
-      status: 'completed',
-    };
-    await saveIncident(incident);
-    await loadIncidents();
-    setSelected(null);
-    setForm({});
-    Alert.alert('Saved', 'Incident log saved securely.');
+    try {
+      const incident = {
+        ...(selected || { id: generateId('I') }),
+        ...form,
+        updatedAt: Date.now(),
+        status: 'completed',
+      };
+      await saveIncident(incident);
+      await loadIncidents();
+      setSelected(null);
+      setForm({});
+      Alert.alert('Saved', 'Incident log saved securely.');
+    } catch (e) {
+      console.error('Failed to save incident:', e);
+      Alert.alert('Save Failed', e?.message || 'Could not save the incident. Storage may be full or locked.');
+    }
   };
 
   const handleNew = () => {
@@ -225,6 +238,55 @@ export default function IncidentLogScreen({ route }) {
     setForm((prev) => ({ ...prev, voiceNotes: updated }));
   };
 
+  const playVoiceNote = async (uri) => {
+    try {
+      // Stop any currently playing sound
+      if (sound) {
+        await sound.stopAsync();
+        await sound.unloadAsync();
+        setSound(null);
+      }
+      if (playingUri === uri) {
+        setPlayingUri(null);
+        return;
+      }
+
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+        shouldDuckAndroid: true,
+        staysActiveInBackground: false,
+      });
+
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        { uri },
+        { shouldPlay: true },
+        (status) => {
+          setPlaybackStatus(status);
+          if (status?.didJustFinish) {
+            setPlayingUri(null);
+          }
+        }
+      );
+      setSound(newSound);
+      setPlayingUri(uri);
+    } catch (e) {
+      Alert.alert('Playback Error', e?.message || 'Could not play audio note.');
+      setPlayingUri(null);
+    }
+  };
+
+  const stopVoiceNote = async () => {
+    try {
+      if (sound) {
+        await sound.stopAsync();
+      }
+    } catch (e) {
+      // ignore
+    }
+    setPlayingUri(null);
+  };
+
   const exportText = () => {
     if (!selected) return;
     const lines = INCIDENT_FIELDS.map((f) => `${f.label}: ${form[f.id] || ''}`);
@@ -289,17 +351,22 @@ export default function IncidentLogScreen({ route }) {
                 </Text>
               </TouchableOpacity>
 
-              {(form.voiceNotes || []).map((note, index) => (
-                <View key={index} style={styles.noteItem}>
-                  <Icon name="microphone" size={16} color={COLORS.gold} />
-                  <Text style={styles.noteText} numberOfLines={2}>
-                    {formatDate(note.capturedAt)}
-                  </Text>
-                  <TouchableOpacity onPress={() => removeVoiceNote(index)}>
-                    <Icon name="close-circle" size={20} color={COLORS.danger} />
-                  </TouchableOpacity>
-                </View>
-              ))}
+              {(form.voiceNotes || []).map((note, index) => {
+                const isPlaying = playingUri === note.uri;
+                return (
+                  <View key={index} style={styles.noteItem}>
+                    <TouchableOpacity onPress={() => isPlaying ? stopVoiceNote() : playVoiceNote(note.uri)}>
+                      <Icon name={isPlaying ? 'stop' : 'play'} size={20} color={isPlaying ? COLORS.danger : COLORS.gold} />
+                    </TouchableOpacity>
+                    <Text style={styles.noteText} numberOfLines={2}>
+                      {formatDate(note.capturedAt)}
+                    </Text>
+                    <TouchableOpacity onPress={() => removeVoiceNote(index)}>
+                      <Icon name="close-circle" size={20} color={COLORS.danger} />
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
             </View>
 
             {/* Photos */}

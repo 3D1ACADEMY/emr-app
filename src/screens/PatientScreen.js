@@ -41,16 +41,22 @@ export default function PatientScreen() {
       Alert.alert('Required', 'Please enter patient initials or ID');
       return;
     }
-    const patient = {
-      id: generateId('PT'),
-      ...form,
-      weight: parseFloat(form.weight) || 0,
-      age: parseInt(form.age) || 0,
-    };
-    await storage.savePatient(patient);
-    await loadPatients();
-    setForm({ initials: '', age: '', weight: '', allergies: '', medications: '', medicalHistory: '', notes: '' });
-    setShowForm(false);
+    try {
+      const patient = {
+        id: generateId('PT'),
+        ...form,
+        weight: parseFloat(form.weight) || 0,
+        age: parseInt(form.age) || 0,
+      };
+      await storage.savePatient(patient);
+      await loadPatients();
+      setForm({ initials: '', age: '', weight: '', allergies: '', medications: '', medicalHistory: '', notes: '' });
+      setShowForm(false);
+      Alert.alert('Saved', 'Patient context saved.');
+    } catch (e) {
+      console.error('Failed to save patient:', e);
+      Alert.alert('Save Failed', e?.message || 'Could not save patient context. Storage may be locked.');
+    }
   };
 
   const handleDelete = async (id) => {

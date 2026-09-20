@@ -129,6 +129,18 @@ export default function FacilityLocatorScreen() {
     });
   };
 
+  const openNearbySearch = (query) => {
+    if (!location) {
+      Alert.alert('Location unavailable', 'Enable location permission to search nearby facilities.');
+      return;
+    }
+    const encoded = encodeURIComponent(`${query} near ${location.latitude},${location.longitude}`);
+    const url = `https://www.google.com/maps/search/?api=1&query=${encoded}`;
+    Linking.openURL(url).catch(() => {
+      Alert.alert('Error', 'Could not open maps.');
+    });
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -167,6 +179,27 @@ export default function FacilityLocatorScreen() {
             </Text>
           )}
         </View>
+
+        {isOnline && (
+          <View style={styles.onlineActions}>
+            <TouchableOpacity
+              style={styles.nearbyButton}
+              onPress={() => openNearbySearch('hospital')}
+              activeOpacity={0.8}
+            >
+              <Icon name="hospital-building" size={20} color="#fff" />
+              <Text style={styles.nearbyButtonText}>Find Nearby Hospitals</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.nearbyButton, styles.hbotButton]}
+              onPress={() => openNearbySearch('hyperbaric oxygen therapy center')}
+              activeOpacity={0.8}
+            >
+              <Icon name="diving-scuba-tank" size={20} color="#fff" />
+              <Text style={styles.nearbyButtonText}>Find Nearby HBOT Centers</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {facilities.map((facility) => (
           <View key={facility.id} style={styles.card}>
@@ -369,5 +402,26 @@ const styles = StyleSheet.create({
     fontSize: SIZES.md,
     fontWeight: '700',
     marginLeft: SPACING.sm,
+  },
+  onlineActions: {
+    marginBottom: SPACING.lg,
+  },
+  nearbyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.info,
+    borderRadius: 12,
+    padding: SPACING.lg,
+    marginBottom: SPACING.base,
+  },
+  hbotButton: {
+    backgroundColor: COLORS.teal,
+  },
+  nearbyButtonText: {
+    color: '#fff',
+    fontSize: SIZES.md,
+    fontWeight: '800',
+    marginLeft: SPACING.base,
   },
 });

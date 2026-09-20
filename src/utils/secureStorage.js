@@ -12,6 +12,16 @@ const KEYS = {
   UNLOCK_CODE: '@emr_secure_unlock_code',
 };
 
+const ASYNC_KEYS = {
+  INCIDENT_PREFIX: '@emr_incident:',
+  PATIENT_PREFIX: '@emr_patient:',
+};
+
+const FALLBACK_KEYS = {
+  PATIENT_IDS: '@emr_patient_ids',
+  INCIDENT_IDS: '@emr_incident_ids',
+};
+
 export const VALID_UNLOCK_CODES = ['3DREJUV2026', 'MASTERCLASS'];
 
 const OPTIONS = {
@@ -64,12 +74,79 @@ async function setStringArray(key, arr) {
 }
 
 // -------------------- Patients --------------------
+// Same fallback pattern as incidents: SecureStore preferred, AsyncStorage backup.
+
+async function getPatientIds() {
+  let ids = await getStringArray(KEYS.PATIENT_IDS);
+  if (ids.length === 0) {
+    try {
+      const fallback = await AsyncStorage.getItem(FALLBACK_KEYS.PATIENT_IDS);
+      if (fallback) ids = JSON.parse(fallback);
+    } catch (e) {
+      console.warn('Fallback patient IDs read failed:', e.message);
+    }
+  }
+  return ids;
+}
+
+async function setPatientIds(ids) {
+  try {
+    await setStringArray(KEYS.PATIENT_IDS, ids);
+  } catch (e) {
+    console.warn('SecureStore patient IDs write failed, falling back to AsyncStorage:', e.message);
+  }
+  try {
+    await AsyncStorage.setItem(FALLBACK_KEYS.PATIENT_IDS, JSON.stringify(ids));
+  } catch (e) {
+    console.error('AsyncStorage patient IDs write failed:', e);
+    throw e;
+  }
+}
+
+async function getPatientItem(id) {
+  let raw = await getItem(`${KEYS.PATIENT_IDS}:${id}`);
+  if (!raw) {
+    try {
+      raw = await AsyncStorage.getItem(`${ASYNC_KEYS.PATIENT_PREFIX}${id}`);
+    } catch (e) {
+      console.warn('Fallback patient read failed:', e.message);
+    }
+  }
+  return raw;
+}
+
+async function setPatientItem(id, value) {
+  try {
+    await setItem(`${KEYS.PATIENT_IDS}:${id}`, value);
+  } catch (e) {
+    console.warn('SecureStore patient write failed, falling back to AsyncStorage:', e.message);
+  }
+  try {
+    await AsyncStorage.setItem(`${ASYNC_KEYS.PATIENT_PREFIX}${id}`, value);
+  } catch (e) {
+    console.error('AsyncStorage patient write failed:', e);
+    throw e;
+  }
+}
+
+async function removePatientItem(id) {
+  try {
+    await removeItem(`${KEYS.PATIENT_IDS}:${id}`);
+  } catch (e) {
+    console.warn('SecureStore patient delete failed:', e.message);
+  }
+  try {
+    await AsyncStorage.removeItem(`${ASYNC_KEYS.PATIENT_PREFIX}${id}`);
+  } catch (e) {
+    console.error('AsyncStorage patient delete failed:', e);
+  }
+}
 
 export async function getPatients() {
-  const ids = await getStringArray(KEYS.PATIENT_IDS);
+  const ids = await getPatientIds();
   const patients = [];
   for (const id of ids) {
-    const raw = await getItem(`${KEYS.PATIENT_IDS}:${id}`);
+    const raw = await getPatientItem(id);
     if (raw) {
       try {
         patients.push(JSON.parse(raw));
@@ -82,34 +159,104 @@ export async function getPatients() {
 }
 
 export async function savePatient(patient) {
-  const ids = await getStringArray(KEYS.PATIENT_IDS);
+  const ids = await getPatientIds();
   const existingIndex = ids.indexOf(patient.id);
   if (existingIndex < 0) {
     ids.push(patient.id);
-    await setStringArray(KEYS.PATIENT_IDS, ids);
+    await setPatientIds(ids);
   }
-  await setItem(
-    `${KEYS.PATIENT_IDS}:${patient.id}`,
+  await setPatientItem(
+    patient.id,
     JSON.stringify({ ...patient, updatedAt: Date.now() })
   );
   return getPatients();
 }
 
 export async function deletePatient(id) {
-  const ids = await getStringArray(KEYS.PATIENT_IDS);
+  const ids = await getPatientIds();
   const filtered = ids.filter((pId) => pId !== id);
-  await setStringArray(KEYS.PATIENT_IDS, filtered);
-  await removeItem(`${KEYS.PATIENT_IDS}:${id}`);
+  await setPatientIds(filtered);
+  await removePatientItem(id);
   return getPatients();
 }
 
 // -------------------- Incidents --------------------
+// SecureStore is the preferred encrypted store, but some Android devices fail
+// on large values or keystore access. We fall back to AsyncStorage for metadata
+// so the incident log never silently loses entries. Media files remain in the
+// app-private FileSystem.documentDirectory.
+
+async function getIncidentIds() {
+  let ids = await getStringArray(KEYS.INCIDENT_IDS);
+  if (ids.length === 0) {
+    try {
+      const fallback = await AsyncStorage.getItem(FALLBACK_KEYS.INCIDENT_IDS);
+      if (fallback) ids = JSON.parse(fallback);
+    } catch (e) {
+      console.warn('Fallback incident IDs read failed:', e.message);
+    }
+  }
+  return ids;
+}
+
+async function setIncidentIds(ids) {
+  try {
+    await setStringArray(KEYS.INCIDENT_IDS, ids);
+  } catch (e) {
+    console.warn('SecureStore incident IDs write failed, falling back to AsyncStorage:', e.message);
+  }
+  try {
+    await AsyncStorage.setItem(FALLBACK_KEYS.INCIDENT_IDS, JSON.stringify(ids));
+  } catch (e) {
+    console.error('AsyncStorage incident IDs write failed:', e);
+    throw e;
+  }
+}
+
+async function getIncidentItem(id) {
+  let raw = await getItem(`${KEYS.INCIDENT_IDS}:${id}`);
+  if (!raw) {
+    try {
+      raw = await AsyncStorage.getItem(`${ASYNC_KEYS.INCIDENT_PREFIX}${id}`);
+    } catch (e) {
+      console.warn('Fallback incident read failed:', e.message);
+    }
+  }
+  return raw;
+}
+
+async function setIncidentItem(id, value) {
+  try {
+    await setItem(`${KEYS.INCIDENT_IDS}:${id}`, value);
+  } catch (e) {
+    console.warn('SecureStore incident write failed, falling back to AsyncStorage:', e.message);
+  }
+  try {
+    await AsyncStorage.setItem(`${ASYNC_KEYS.INCIDENT_PREFIX}${id}`, value);
+  } catch (e) {
+    console.error('AsyncStorage incident write failed:', e);
+    throw e;
+  }
+}
+
+async function removeIncidentItem(id) {
+  try {
+    await removeItem(`${KEYS.INCIDENT_IDS}:${id}`);
+  } catch (e) {
+    console.warn('SecureStore incident delete failed:', e.message);
+  }
+  try {
+    await AsyncStorage.removeItem(`${ASYNC_KEYS.INCIDENT_PREFIX}${id}`);
+  } catch (e) {
+    console.error('AsyncStorage incident delete failed:', e);
+  }
+}
 
 export async function getIncidents() {
-  const ids = await getStringArray(KEYS.INCIDENT_IDS);
+  const ids = await getIncidentIds();
   const incidents = [];
   for (const id of ids) {
-    const raw = await getItem(`${KEYS.INCIDENT_IDS}:${id}`);
+    const raw = await getIncidentItem(id);
     if (raw) {
       try {
         incidents.push(JSON.parse(raw));
@@ -122,24 +269,25 @@ export async function getIncidents() {
 }
 
 export async function saveIncident(incident) {
-  const ids = await getStringArray(KEYS.INCIDENT_IDS);
+  const ids = await getIncidentIds();
   const existingIndex = ids.indexOf(incident.id);
   if (existingIndex < 0) {
     ids.push(incident.id);
-    await setStringArray(KEYS.INCIDENT_IDS, ids);
+    await setIncidentIds(ids);
   }
-  await setItem(
-    `${KEYS.INCIDENT_IDS}:${incident.id}`,
+  await setIncidentItem(
+    incident.id,
     JSON.stringify({ ...incident, updatedAt: Date.now() })
   );
   return getIncidents();
 }
 
 export async function deleteIncident(id) {
-  const ids = await getStringArray(KEYS.INCIDENT_IDS);
+  const ids = await getIncidentIds();
   const filtered = ids.filter((iId) => iId !== id);
-  await setStringArray(KEYS.INCIDENT_IDS, filtered);
-  await removeItem(`${KEYS.INCIDENT_IDS}:${id}`);
+  await setIncidentIds(filtered);
+  await removeIncidentItem(id);
+  await removeItem(`${KEYS.CHECKLIST_PREFIX}${id}`);
   return getIncidents();
 }
 

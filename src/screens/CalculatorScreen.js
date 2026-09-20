@@ -31,7 +31,6 @@ const InputField = ({ label, value, onChange, placeholder, suffix, keyboard = 'n
         keyboardType={keyboard}
         placeholder={placeholder}
         placeholderTextColor={COLORS.textMuted}
-        color={COLORS.text}
       />
       {suffix && <Text style={styles.suffix}>{suffix}</Text>}
     </View>
@@ -69,7 +68,7 @@ export default function CalculatorScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>Clinical Calculators</Text>
 
         <View style={styles.tabRow}>
@@ -183,9 +182,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scrollView: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
   scroll: {
     padding: SPACING.lg,
     paddingBottom: SPACING.xxl,
+    backgroundColor: COLORS.background,
   },
   title: {
     color: COLORS.text,
@@ -254,6 +258,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: SPACING.base,
     color: COLORS.text,
+    backgroundColor: COLORS.surface,
     fontSize: SIZES.md,
   },
   suffix: {
@@ -298,7 +303,7 @@ const styles = StyleSheet.create({
     marginTop: SPACING.base,
   },
   resultLabel: {
-    color: COLORS.goldLight,
+    color: COLORS.gold,
     fontSize: SIZES.md,
     fontWeight: '700',
     marginBottom: 4,
