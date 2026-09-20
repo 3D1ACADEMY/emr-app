@@ -184,7 +184,7 @@ export default function FaceMapImage({ zones, selectedId, onSelect, onShowLipDet
               </TouchableOpacity>
             </View>
             <Image
-              source={require('../assets/lip-vascular-supply.png')}
+              source={require('../assets/lip-vascular-supply.jpg')}
               style={styles.lipImage}
               resizeMode="contain"
             />
