@@ -154,7 +154,7 @@ export default function FacilityLocatorScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>Emergency Facility Locator</Text>
 
         <View style={styles.statusCard}>
@@ -267,6 +267,11 @@ const styles = StyleSheet.create({
     marginTop: SPACING.base,
     fontSize: SIZES.md,
   },
+  scrollView: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+
   scroll: {
     padding: SPACING.lg,
     paddingBottom: SPACING.xxl,

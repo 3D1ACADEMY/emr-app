@@ -66,7 +66,7 @@ export default function PatientScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>Patient Context</Text>
         <Text style={styles.description}>
           Store quick patient data used during emergency dosing and documentation.
@@ -152,6 +152,11 @@ function Input({ label, value, onChange, keyboard = 'default', multiline = false
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
+  scrollView: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+
   scroll: { padding: SPACING.lg, paddingBottom: SPACING.xxl },
   title: { color: COLORS.text, fontSize: SIZES.xxl, fontWeight: '800', marginBottom: 4 },
   description: { color: COLORS.textMuted, fontSize: SIZES.md, marginBottom: SPACING.lg },

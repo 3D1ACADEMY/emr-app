@@ -20,7 +20,7 @@ export default function EmergencyScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll}>
         <View style={styles.alertBanner}>
           <Text style={styles.alertTitle}>Select the Emergency</Text>
           <Text style={styles.alertText}>
@@ -45,6 +45,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scrollView: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+
   scroll: {
     padding: SPACING.lg,
   },

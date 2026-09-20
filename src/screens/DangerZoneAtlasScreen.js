@@ -65,7 +65,7 @@ export default function DangerZoneAtlasScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
           <View>
             <Text style={styles.title}>Danger Zone Atlas</Text>
@@ -130,6 +130,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scrollView: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+
   scroll: {
     padding: SPACING.lg,
     paddingBottom: SPACING.xxl,

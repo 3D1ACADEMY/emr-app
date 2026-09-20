@@ -51,7 +51,7 @@ export default function VascularOcclusionScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll}>
         {/* Header Badge */}
         <View style={styles.headerRow}>
           <View style={[styles.badge, { backgroundColor: protocol.color }]}>
@@ -167,6 +167,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scrollView: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+
   scroll: {
     padding: SPACING.lg,
     paddingBottom: SPACING.xxl,

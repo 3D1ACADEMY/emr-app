@@ -51,7 +51,7 @@ export default function AnaphylaxisScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll}>
         <View style={styles.headerRow}>
           <View style={[styles.badge, { backgroundColor: protocol.color }]}>
             <Text style={styles.badgeText}>{protocol.badge}</Text>
@@ -130,6 +130,11 @@ export default function AnaphylaxisScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
+  scrollView: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+
   scroll: { padding: SPACING.lg, paddingBottom: SPACING.xxl },
   headerRow: {
     flexDirection: 'row',
