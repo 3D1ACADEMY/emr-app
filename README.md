@@ -74,6 +74,15 @@ Produces a working static bundle in `dist/`.
 - Size: ~35 MB
 - Build ID: `0e817464-fa9e-4ade-887a-285d4bafe360`
 
+## Production AAB
+
+**CEMS-PRODUCTION.aab** (Google Play upload)
+- Download: https://expo.dev/artifacts/eas/R87Zv2OaqBTIiG4k53LVha8YWqaJg8-D6TQbxOwXEwk.aab
+- Size: ~35 MB
+- Build ID: `93c63323-4ab3-453f-95ea-05a1f76d99db`
+- Version Code: `2`
+- Package: `com.rejuvenation.emr`
+
 ## EAS Build (iOS/Android store binaries)
 
 1. Create Expo account at https://expo.dev
