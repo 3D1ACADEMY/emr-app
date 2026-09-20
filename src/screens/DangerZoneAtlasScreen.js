@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Haptics from 'expo-haptics';
 import { COLORS, SIZES, SPACING } from '../constants/theme';
 import ErrorBoundary from '../components/ErrorBoundary';
-import FaceMapSvg from '../features/dangerZone/components/FaceMapSvg';
+import FaceMapImage from '../features/dangerZone/components/FaceMapImage';
 import ZoneList from '../features/dangerZone/components/ZoneList';
 import ZoneDetailSheet from '../features/dangerZone/components/ZoneDetailSheet';
 import AtlasErrorFallback from '../features/dangerZone/components/AtlasErrorFallback';
@@ -22,12 +22,11 @@ import {
   PROTOCOL_ROUTES,
 } from '../features/dangerZone/data/zones';
 
-function MapSection({ orientation, selectedId, onSelect }) {
+function MapSection({ selectedId, onSelect }) {
   return (
     <ErrorBoundary fallbackMessage="The anatomy map failed to render. The list below is still available.">
-      <FaceMapSvg
+      <FaceMapImage
         zones={DANGER_ZONES}
-        orientation={orientation}
         selectedId={selectedId}
         onSelect={onSelect}
       />
@@ -42,7 +41,6 @@ function MapSection({ orientation, selectedId, onSelect }) {
 }
 
 export default function DangerZoneAtlasScreen({ navigation }) {
-  const [orientation, setOrientation] = useState('frontal');
   const [selectedZone, setSelectedZone] = useState(null);
   const [mapKey, setMapKey] = useState(0);
 
@@ -84,33 +82,11 @@ export default function DangerZoneAtlasScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.toggleRow}>
-          <TouchableOpacity
-            style={[styles.toggleButton, orientation === 'frontal' && styles.toggleActive]}
-            onPress={() => setOrientation('frontal')}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.toggleText, orientation === 'frontal' && styles.toggleTextActive]}>
-              Frontal
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.toggleButton, orientation === 'lateral' && styles.toggleActive]}
-            onPress={() => setOrientation('lateral')}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.toggleText, orientation === 'lateral' && styles.toggleTextActive]}>
-              Lateral
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         <ErrorBoundary
           fallback={<AtlasErrorFallback onRetry={handleRetryMap} />}
         >
           <MapSection
             key={mapKey}
-            orientation={orientation}
             selectedId={selectedZone?.id}
             onSelect={handleSelect}
           />
@@ -176,32 +152,6 @@ const styles = StyleSheet.create({
   },
   disclaimerLink: {
     padding: SPACING.sm,
-  },
-  toggleRow: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.card,
-    borderRadius: 10,
-    padding: 4,
-    marginBottom: SPACING.lg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: SPACING.sm,
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  toggleActive: {
-    backgroundColor: COLORS.gold,
-  },
-  toggleText: {
-    color: COLORS.textMuted,
-    fontSize: SIZES.md,
-    fontWeight: '700',
-  },
-  toggleTextActive: {
-    color: COLORS.textInverse,
   },
   legend: {
     marginTop: SPACING.lg,
