@@ -172,20 +172,23 @@ export const HYALURONIDASE_ZONES = [
     value: 'glabella',
     label: 'Glabella / Nasal Dorsum (High Risk)',
     baseDose: 300,
+    storage: 'Store reconstituted hyaluronidase below 25°C; use within local protocol time limits.',
     instructions:
-      'Inject 300 IU minimum. Reconstitute 150 IU/mL vial with 1.0 mL normal saline. Infiltrate grid pattern across supratrochlear/dorsal pathways (0.1 mL per puncture every 0.5 cm).',
+      'Inject 300 IU minimum. Reconstitute 1,500 IU vial with 1.0 mL normal saline (1500 IU/mL). Total 300 IU = 0.2 mL. Infiltrate grid pattern across supratrochlear/dorsal pathways.',
   },
   {
     value: 'nasal',
     label: 'Nasal Tip / Alar Sidewall',
     baseDose: 300,
+    storage: 'Store reconstituted hyaluronidase below 25°C; use within local protocol time limits.',
     instructions:
-      'Inject 300 IU minimum along nasal sidewall and tip. Reconstitute 150 IU/mL vial with 1.0 mL normal saline. Use serial micro-punctures along alar and dorsal arteries.',
+      'Inject 300 IU minimum along nasal sidewall and tip. Reconstitute 1,500 IU vial with 1.0 mL normal saline (1500 IU/mL). Total 300 IU = 0.2 mL. Use serial micro-punctures along alar and dorsal arteries.',
   },
   {
     value: 'lip',
     label: 'Lips / Perioral Field',
     baseDose: 150,
+    storage: 'Store reconstituted hyaluronidase below 25°C; use within local protocol time limits.',
     instructions:
       'Inject 150–225 IU along mucosal and submucosal planes of the labial arcade. Distribute evenly across ischemic segments.',
   },
@@ -193,6 +196,7 @@ export const HYALURONIDASE_ZONES = [
     value: 'cheek',
     label: 'Mid-Face / Cheek Vector',
     baseDose: 300,
+    storage: 'Store reconstituted hyaluronidase below 25°C; use within local protocol time limits.',
     instructions:
       'Inject 300 IU minimum along the trajectory of the facial/angular artery. Re-evaluate perfusion at 30 minutes.',
   },
@@ -200,6 +204,7 @@ export const HYALURONIDASE_ZONES = [
     value: 'temple',
     label: 'Temple / Lateral Brow',
     baseDose: 300,
+    storage: 'Store reconstituted hyaluronidase below 25°C; use within local protocol time limits.',
     instructions:
       'Inject 300 IU in superficial and deep temporal planes. Target superficial temporal artery distribution.',
   },
@@ -207,6 +212,7 @@ export const HYALURONIDASE_ZONES = [
     value: 'forehead',
     label: 'Forehead / Supraorbital',
     baseDose: 300,
+    storage: 'Store reconstituted hyaluronidase below 25°C; use within local protocol time limits.',
     instructions:
       'Inject 300 IU tracking the supraorbital/supratrochlear vessels. Use fanning infiltration across the affected region.',
   },

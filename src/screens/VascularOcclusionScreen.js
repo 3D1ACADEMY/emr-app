@@ -128,6 +128,12 @@ export default function VascularOcclusionScreen({ navigation }) {
           <View style={styles.resultBox}>
             <Text style={styles.resultLabel}>Recommended Initial Dosage</Text>
             <Text style={styles.resultDose}>{doseResult.totalDose} IU</Text>
+            <Text style={styles.resultVolume}>
+              {doseResult.volumeMl.toFixed(2)} mL at {doseResult.concentrationIuPerMl} IU/mL
+            </Text>
+            {!!doseResult.storage && (
+              <Text style={styles.resultStorage}>{doseResult.storage}</Text>
+            )}
             <Text style={styles.resultInstructions}>{doseResult.instructions}</Text>
           </View>
         </View>
@@ -280,6 +286,19 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     fontSize: SIZES.sm,
     lineHeight: 20,
+    marginTop: SPACING.sm,
+  },
+  resultVolume: {
+    color: COLORS.teal,
+    fontSize: SIZES.md,
+    fontWeight: '700',
+    marginBottom: SPACING.sm,
+  },
+  resultStorage: {
+    color: COLORS.goldLight,
+    fontSize: SIZES.sm,
+    fontStyle: 'italic',
+    marginBottom: SPACING.sm,
   },
   ruleCard: {
     backgroundColor: COLORS.card,

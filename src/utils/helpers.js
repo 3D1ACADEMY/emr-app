@@ -27,11 +27,16 @@ export const calculateHyaluronidase = (zoneValue, severityValue) => {
   const zone = HYALURONIDASE_ZONES.find((z) => z.value === zoneValue) || HYALURONIDASE_ZONES[0];
   const severity = SEVERITY_OPTIONS.find((s) => s.value === severityValue) || SEVERITY_OPTIONS[0];
   const totalDose = zone.baseDose + severity.doseAdjustment;
+  const concentrationIuPerMl = 1500; // CMAC: 1,500 IU reconstituted in 1.0 mL
+  const volumeMl = totalDose / concentrationIuPerMl;
   return {
     zone,
     severity,
     totalDose,
+    volumeMl,
+    concentrationIuPerMl,
     instructions: `${zone.instructions} ${severity.note}`,
+    storage: zone.storage || '',
   };
 };
 
