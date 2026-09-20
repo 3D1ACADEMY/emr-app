@@ -89,7 +89,7 @@ export default function VascularOcclusionScreen({ navigation }) {
 
         {/* Dose Calculator */}
         <View style={styles.calculatorCard}>
-          <Text style={styles.sectionTitle}>Hyaluronidase Dosing Calculator</Text>
+          <Text style={styles.calculatorTitle}>Hyaluronidase Dosing Calculator</Text>
 
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Affected Anatomical Zone</Text>
@@ -99,10 +99,10 @@ export default function VascularOcclusionScreen({ navigation }) {
                 onValueChange={(itemValue) => setZone(itemValue)}
                 dropdownIconColor={COLORS.gold}
                 style={styles.picker}
-                itemStyle={{ color: COLORS.text, fontSize: SIZES.md }}
+                itemStyle={{ color: '#0F2440', fontSize: SIZES.md }}
               >
                 {HYALURONIDASE_ZONES.map((z) => (
-                  <Picker.Item key={z.value} label={z.label} value={z.value} color={COLORS.text} />
+                  <Picker.Item key={z.value} label={z.label} value={z.value} color="#0F2440" />
                 ))}
               </Picker>
             </View>
@@ -116,10 +116,10 @@ export default function VascularOcclusionScreen({ navigation }) {
                 onValueChange={(itemValue) => setSeverity(itemValue)}
                 dropdownIconColor={COLORS.gold}
                 style={styles.picker}
-                itemStyle={{ color: COLORS.text, fontSize: SIZES.md }}
+                itemStyle={{ color: '#0F2440', fontSize: SIZES.md }}
               >
                 {SEVERITY_OPTIONS.map((s) => (
-                  <Picker.Item key={s.value} label={s.label} value={s.value} color={COLORS.text} />
+                  <Picker.Item key={s.value} label={s.label} value={s.value} color="#0F2440" />
                 ))}
               </Picker>
             </View>
@@ -239,36 +239,42 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
   },
   calculatorCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: SPACING.lg,
     marginBottom: SPACING.lg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: '#E2E8F0',
+  },
+  calculatorTitle: {
+    color: '#0F2440',
+    fontSize: SIZES.lg,
+    fontWeight: '700',
+    marginBottom: SPACING.md,
   },
   inputGroup: {
     marginBottom: SPACING.lg,
   },
   inputLabel: {
-    color: COLORS.textMuted,
+    color: '#0F2440',
     fontSize: SIZES.sm,
     marginBottom: SPACING.sm,
     fontWeight: '600',
   },
   pickerContainer: {
-    backgroundColor: COLORS.surface,
+    backgroundColor: '#F8FAFC',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLORS.borderStrong,
+    borderColor: '#CBD5E1',
     overflow: 'hidden',
   },
   picker: {
-    color: COLORS.text,
+    color: '#0F2440',
   },
   resultBox: {
-    backgroundColor: COLORS.backgroundAlt,
+    backgroundColor: '#F8FAFC',
     borderLeftWidth: 4,
-    borderLeftColor: COLORS.gold,
+    borderLeftColor: '#D4AF37',
     borderRadius: 0,
     borderTopRightRadius: 6,
     borderBottomRightRadius: 6,
@@ -276,31 +282,31 @@ const styles = StyleSheet.create({
     marginTop: SPACING.base,
   },
   resultLabel: {
-    color: COLORS.goldLight,
+    color: '#0F2440',
     fontSize: SIZES.md,
     fontWeight: '700',
     marginBottom: 4,
   },
   resultDose: {
-    color: COLORS.text,
+    color: '#0F2440',
     fontSize: SIZES.xxl,
     fontWeight: '800',
     marginBottom: SPACING.sm,
   },
   resultInstructions: {
-    color: COLORS.textMuted,
+    color: '#334155',
     fontSize: SIZES.sm,
     lineHeight: 20,
     marginTop: SPACING.sm,
   },
   resultVolume: {
-    color: COLORS.teal,
+    color: '#0F2440',
     fontSize: SIZES.md,
     fontWeight: '700',
     marginBottom: SPACING.sm,
   },
   resultStorage: {
-    color: COLORS.goldLight,
+    color: '#475569',
     fontSize: SIZES.sm,
     fontStyle: 'italic',
     marginBottom: SPACING.sm,
