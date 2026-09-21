@@ -56,7 +56,7 @@ export default function DangerZoneAtlasScreen({ navigation }) {
 
   const handleOpenCalculator = useCallback(() => {
     setSelectedZone(null);
-    navigation.navigate('Calculator');
+    navigation.navigate('VascularOcclusion');
   }, [navigation]);
 
   const handleRetryMap = useCallback(() => {
