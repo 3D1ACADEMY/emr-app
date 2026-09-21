@@ -27,6 +27,8 @@ export default function HomeScreen({ navigation }) {
       setIncidentCount(incidents.length);
       if (incidents.length > 0) {
         setLastIncident(incidents[incidents.length - 1]);
+      } else {
+        setLastIncident(null);
       }
       const pts = await storage.getPatients();
       setPatients(pts);

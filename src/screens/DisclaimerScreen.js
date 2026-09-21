@@ -33,13 +33,17 @@ By using this app, you acknowledge and agree that:
 
 Tap "I Agree" only if you are a qualified medical professional and accept full responsibility for clinical decisions.`;
 
-export default function DisclaimerScreen({ navigation, disclaimerText = DEFAULT_DISCLAIMER }) {
+export default function DisclaimerScreen({ navigation, route }) {
+  const viewOnly = route?.params?.viewOnly === true;
+  const disclaimerText = route?.params?.disclaimerText || DEFAULT_DISCLAIMER;
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    checkPreviousAgreement();
-  }, []);
+    if (!viewOnly) {
+      checkPreviousAgreement();
+    }
+  }, [viewOnly]);
 
   const checkPreviousAgreement = async () => {
     try {
@@ -104,17 +108,29 @@ export default function DisclaimerScreen({ navigation, disclaimerText = DEFAULT_
           </TouchableOpacity>
         </ScrollView>
 
-        <Button
-          mode="contained"
-          onPress={handleAgreePress}
-          loading={loading}
-          disabled={!agreed || loading}
-          style={[styles.button, !agreed && styles.disabledButton]}
-          contentStyle={styles.buttonContent}
-          labelStyle={styles.buttonLabel}
-        >
-          {loading ? 'Saving...' : 'I Agree & Enter App'}
-        </Button>
+        {viewOnly ? (
+          <Button
+            mode="contained"
+            onPress={() => navigation.goBack()}
+            style={styles.button}
+            contentStyle={styles.buttonContent}
+            labelStyle={styles.buttonLabel}
+          >
+            Back to Settings
+          </Button>
+        ) : (
+          <Button
+            mode="contained"
+            onPress={handleAgreePress}
+            loading={loading}
+            disabled={!agreed || loading}
+            style={[styles.button, !agreed && styles.disabledButton]}
+            contentStyle={styles.buttonContent}
+            labelStyle={styles.buttonLabel}
+          >
+            {loading ? 'Saving...' : 'I Agree & Enter App'}
+          </Button>
+        )}
       </Surface>
     </SafeAreaView>
   );

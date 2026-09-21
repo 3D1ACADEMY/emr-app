@@ -15,11 +15,10 @@ import * as Haptics from 'expo-haptics';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { COLORS, SIZES, SPACING } from '../constants/theme';
 import { storage } from '../utils/storage';
-import * as SecureStore from 'expo-secure-store';
+import { hasSetPin, validatePin, setPin } from '../utils/secureStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 
-const PIN_KEY = 'cems_user_pin';
 const BIOMETRIC_ENABLED_KEY = 'cems_biometric_enabled';
 
 export default function SettingsScreen({ navigation }) {
@@ -68,7 +67,6 @@ export default function SettingsScreen({ navigation }) {
           onPress: async () => {
             try {
               await storage.clearAll();
-              await SecureStore.deleteItemAsync(PIN_KEY);
               await AsyncStorage.clear();
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
               Alert.alert('Data Cleared', 'All app data has been removed.');
@@ -128,7 +126,7 @@ export default function SettingsScreen({ navigation }) {
             label="View Disclaimer"
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate('Disclaimer');
+              navigation.navigate('Disclaimer', { viewOnly: true });
             }}
           />
           <SettingItem
@@ -169,14 +167,14 @@ export default function SettingsScreen({ navigation }) {
             <View style={styles.keypad}>
               {[1,2,3,4,5,6,7,8,9].map((n) => (
                 <PinButton key={n} value={n} onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  if (pinInput.length < 6) setPinInput(pinInput + n);
-                }} />
+   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+   if (pinInput.length < 4) setPinInput(pinInput + n);
+ }} />
               ))}
               <View style={styles.keypadEmpty} />
               <PinButton value={0} onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                if (pinInput.length < 6) setPinInput(pinInput + '0');
+                if (pinInput.length < 4) setPinInput(pinInput + '0');
               }} />
               <TouchableOpacity
                 style={styles.keypadButton}
@@ -203,17 +201,20 @@ export default function SettingsScreen({ navigation }) {
                 onPress={async () => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   if (pinStep === 'current') {
-                    const savedPin = await SecureStore.getItemAsync(PIN_KEY);
-                    if (pinInput !== savedPin) {
-                      Alert.alert('Incorrect PIN', 'Please try again.');
-                      setPinInput('');
-                      return;
+                    const pinExists = await hasSetPin();
+                    if (pinExists) {
+                      const valid = await validatePin(pinInput);
+                      if (!valid) {
+                        Alert.alert('Incorrect PIN', 'Please try again.');
+                        setPinInput('');
+                        return;
+                      }
                     }
                     setPinStep('new');
                     setPinInput('');
                   } else if (pinStep === 'new') {
-                    if (pinInput.length < 4) {
-                      Alert.alert('PIN Too Short', 'Use at least 4 digits.');
+                    if (pinInput.length !== 4 || !/^\d{4}$/.test(pinInput)) {
+                      Alert.alert('Invalid PIN', 'PIN must be exactly 4 digits.');
                       return;
                     }
                     setPendingPin(pinInput);
@@ -226,9 +227,13 @@ export default function SettingsScreen({ navigation }) {
                       setPinInput('');
                       return;
                     }
-                    await SecureStore.setItemAsync(PIN_KEY, pinInput);
-                    setPinModalVisible(false);
-                    Alert.alert('PIN Updated', 'Your PIN has been changed.');
+                    try {
+                      await setPin(pinInput);
+                      setPinModalVisible(false);
+                      Alert.alert('PIN Updated', 'Your PIN has been changed.');
+                    } catch (e) {
+                      Alert.alert('Error', 'Could not update PIN: ' + e.message);
+                    }
                   }
                 }}
               >

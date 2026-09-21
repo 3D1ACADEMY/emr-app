@@ -30,6 +30,10 @@ export default function IncidentLogScreen({ route }) {
   const [incidents, setIncidents] = useState([]);
   const [selected, setSelected] = useState(null);
   const [form, setForm] = useState({});
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editIncident, setEditIncident] = useState(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editNotes, setEditNotes] = useState('');
 
   // Audio recording state
   const [recording, setRecording] = useState(null);
@@ -104,6 +108,32 @@ export default function IncidentLogScreen({ route }) {
   const handleSelect = (incident) => {
     setSelected(incident);
     setForm(incident);
+  };
+
+  const openEditModal = (incident) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setEditIncident(incident);
+    setEditTitle(incident.title || '');
+    setEditNotes(incident.notes || '');
+    setEditModalVisible(true);
+  };
+
+  const saveEdit = async () => {
+    if (!editIncident) return;
+    try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      const updated = { ...editIncident, title: editTitle.trim() || editIncident.title, notes: editNotes, updatedAt: Date.now() };
+      await saveIncident(updated);
+      await loadIncidents();
+      if (selected?.id === editIncident.id) {
+        setSelected(updated);
+        setForm(updated);
+      }
+      setEditModalVisible(false);
+      Alert.alert('Saved', 'Incident updated.');
+    } catch (e) {
+      Alert.alert('Error', 'Could not update incident: ' + e.message);
+    }
   };
 
   const updateField = (fieldId, value) => {
@@ -535,6 +565,9 @@ export default function IncidentLogScreen({ route }) {
                   <View style={[styles.statusBadge, { backgroundColor: incident.status === 'completed' ? COLORS.success : COLORS.warning }]}>
                     <Text style={styles.statusText}>{incident.status}</Text>
                   </View>
+                  <TouchableOpacity onPress={() => openEditModal(incident)} style={{ marginLeft: SPACING.sm }}>
+                    <Icon name="pencil-outline" size={20} color={COLORS.gold} />
+                  </TouchableOpacity>
                   <TouchableOpacity onPress={() => handleDeleteIncident(incident.id)} style={{ marginLeft: SPACING.sm }}>
                     <Icon name="trash-can-outline" size={20} color={COLORS.danger} />
                   </TouchableOpacity>
@@ -599,6 +632,51 @@ export default function IncidentLogScreen({ route }) {
               </TouchableOpacity>
             </View>
           )}
+        </View>
+      </Modal>
+
+      {/* Edit Incident Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={editModalVisible}
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View style={styles.editModalOverlay}>
+          <View style={styles.editModal}>
+            <Text style={styles.editModalTitle}>Edit Incident</Text>
+            <Text style={styles.editModalLabel}>Title</Text>
+            <TextInput
+              style={styles.editModalInput}
+              value={editTitle}
+              onChangeText={setEditTitle}
+              placeholder="Incident title"
+              placeholderTextColor={COLORS.textMuted}
+            />
+            <Text style={styles.editModalLabel}>Notes</Text>
+            <TextInput
+              style={[styles.editModalInput, { height: 100, textAlignVertical: 'top' }]}
+              value={editNotes}
+              onChangeText={setEditNotes}
+              placeholder="Additional notes"
+              placeholderTextColor={COLORS.textMuted}
+              multiline
+            />
+            <View style={styles.editModalActions}>
+              <TouchableOpacity
+                style={[styles.editModalButton, { backgroundColor: COLORS.surface }]}
+                onPress={() => setEditModalVisible(false)}
+              >
+                <Text style={{ color: COLORS.text, fontWeight: '600' }}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.editModalButton, { backgroundColor: COLORS.gold }]}
+                onPress={saveEdit}
+              >
+                <Text style={{ color: '#0F2440', fontWeight: '700' }}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </Modal>
     </SafeAreaView>
@@ -780,6 +858,13 @@ const styles = StyleSheet.create({
   incidentMeta: { flexDirection: 'row', marginTop: SPACING.sm },
   metaItem: { flexDirection: 'row', alignItems: 'center', marginRight: SPACING.base },
   metaText: { color: COLORS.textMuted, fontSize: SIZES.sm, marginLeft: 2 },
+  editModalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', padding: SPACING.lg },
+  editModal: { backgroundColor: COLORS.card, borderRadius: 16, padding: SPACING.lg, borderWidth: 1, borderColor: COLORS.border },
+  editModalTitle: { color: COLORS.gold, fontSize: SIZES.lg, fontWeight: '700', marginBottom: SPACING.base },
+  editModalLabel: { color: COLORS.textMuted, fontSize: SIZES.sm, fontWeight: '600', marginBottom: SPACING.sm, marginTop: SPACING.base },
+  editModalInput: { backgroundColor: COLORS.background, borderRadius: 10, padding: SPACING.base, color: COLORS.text, borderWidth: 1, borderColor: COLORS.border },
+  editModalActions: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: SPACING.lg, gap: SPACING.base },
+  editModalButton: { paddingHorizontal: SPACING.lg, paddingVertical: SPACING.base, borderRadius: 10 },
   cameraContainer: { flex: 1, backgroundColor: '#000' },
   camera: { flex: 1, justifyContent: 'flex-end' },
   cameraControls: {
