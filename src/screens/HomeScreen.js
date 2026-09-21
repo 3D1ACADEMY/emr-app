@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
+  Image,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
@@ -62,9 +63,11 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.title}>CEMS</Text>
             <Text style={styles.subtitle}>Dr. Amr Ismail, MD</Text>
           </View>
-          <View style={styles.logoCircle}>
-            <Text style={styles.logoText}>3D</Text>
-          </View>
+          <Image
+            source={require('../../assets/academy-logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </View>
 
         {/* Critical Alerts */}
@@ -212,18 +215,10 @@ const styles = StyleSheet.create({
     fontSize: SIZES.md,
     marginTop: 2,
   },
-  logoCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: COLORS.gold,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoText: {
-    color: COLORS.textInverse,
-    fontWeight: '900',
-    fontSize: SIZES.lg,
+  logo: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
   },
   alertBanner: {
     flexDirection: 'row',
