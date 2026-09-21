@@ -70,9 +70,9 @@ Produces a working static bundle in `dist/`.
 ## Latest Preview APK
 
 **CEMS-EMERGENCY.APK** (Android preview build)
-- Download: https://expo.dev/artifacts/eas/RPLbwb3ij4oLkQmmhDjKzwJu2AI0qJEN1bdV7p_WWeA.apk
+- Download: https://expo.dev/artifacts/eas/PMpPHirfzCezovpDwo6I4EMR5b3kN47jaoHHitHyltU.apk
 - Size: ~34 MB
-- Build ID: `0990834c-a7a8-4ac8-a782-e10ce0c93aa5`
+- Build ID: `49e9116b-7716-4a9c-a304-9ea03a74d298`
 
 ## Production AAB
 
