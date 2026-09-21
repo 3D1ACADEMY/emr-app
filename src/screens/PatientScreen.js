@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING, SHADOWS } from '../constants/theme';
 import { storage } from '../utils/storage';
 import { generateId } from '../utils/helpers';
+import * as Haptics from 'expo-haptics';
 
 export default function PatientScreen() {
   const [patients, setPatients] = useState([]);
@@ -42,6 +43,7 @@ export default function PatientScreen() {
       return;
     }
     try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const patient = {
         id: generateId('PT'),
         ...form,
@@ -69,6 +71,7 @@ export default function PatientScreen() {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
             await storage.deletePatient(id);
             await loadPatients();
           },

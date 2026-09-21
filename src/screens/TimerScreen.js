@@ -9,6 +9,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Audio } from 'expo-av';
+import * as Notifications from 'expo-notifications';
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
+import * as Haptics from 'expo-haptics';
 import { COLORS, SIZES, SPACING, SHADOWS } from '../constants/theme';
 import { formatTime } from '../utils/helpers';
 
@@ -19,6 +22,16 @@ export default function TimerScreen({ route }) {
   const [initialSeconds, setInitialSeconds] = useState(defaultMinutes * 60);
   const intervalRef = useRef(null);
   const soundRef = useRef(null);
+  const notificationIdRef = useRef(null);
+
+  useEffect(() => {
+    if (isRunning) {
+      activateKeepAwake('timer-active');
+    } else {
+      deactivateKeepAwake('timer-active');
+    }
+    return () => deactivateKeepAwake('timer-active');
+  }, [isRunning]);
 
   useEffect(() => {
     const loadSound = async () => {
@@ -35,8 +48,42 @@ export default function TimerScreen({ route }) {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       if (soundRef.current) soundRef.current.unloadAsync();
+      cancelNotification();
     };
   }, []);
+
+  const cancelNotification = async () => {
+    if (notificationIdRef.current) {
+      try {
+        await Notifications.cancelScheduledNotificationAsync(notificationIdRef.current);
+      } catch (e) {
+        console.warn('Cancel notification failed:', e.message);
+      }
+      notificationIdRef.current = null;
+    }
+  };
+
+  const scheduleCompletionNotification = async (remainingSeconds) => {
+    await cancelNotification();
+    if (remainingSeconds <= 0) return;
+    try {
+      const id = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'CEMS Timer Complete',
+          body: `${label} timer has finished.`,
+          sound: 'alarm-beep.wav',
+          data: { screen: 'Timer' },
+        },
+        trigger: {
+          seconds: remainingSeconds,
+          channelId: 'cems-timers',
+        },
+      });
+      notificationIdRef.current = id;
+    } catch (e) {
+      console.warn('Schedule notification failed:', e.message);
+    }
+  };
 
   const playAlarm = async () => {
     try {
@@ -58,6 +105,7 @@ export default function TimerScreen({ route }) {
             setIsRunning(false);
             Vibration.vibrate([0, 500, 200, 500, 200, 500]);
             playAlarm();
+            cancelNotification();
             return 0;
           }
           return prev - 1;
@@ -68,15 +116,38 @@ export default function TimerScreen({ route }) {
     }
   }, [isRunning]);
 
-  const toggleTimer = () => setIsRunning(!isRunning);
+  const toggleTimer = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const nextRunning = !isRunning;
+    setIsRunning(nextRunning);
+    if (nextRunning) {
+      scheduleCompletionNotification(seconds);
+    } else {
+      cancelNotification();
+    }
+  };
+
   const resetTimer = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setIsRunning(false);
     setSeconds(initialSeconds);
+    cancelNotification();
   };
+
   const adjustTime = (amount) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setIsRunning(false);
     setSeconds((prev) => Math.max(0, prev + amount));
     setInitialSeconds((prev) => Math.max(0, prev + amount));
+    cancelNotification();
+  };
+
+  const setPreset = (min) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setIsRunning(false);
+    setSeconds(min * 60);
+    setInitialSeconds(min * 60);
+    cancelNotification();
   };
 
   const progress = initialSeconds > 0 ? seconds / initialSeconds : 0;
@@ -128,11 +199,7 @@ export default function TimerScreen({ route }) {
               <TouchableOpacity
                 key={min}
                 style={styles.presetButton}
-                onPress={() => {
-                  setIsRunning(false);
-                  setSeconds(min * 60);
-                  setInitialSeconds(min * 60);
-                }}
+                onPress={() => setPreset(min)}
               >
                 <Text style={styles.presetText}>{min}m</Text>
               </TouchableOpacity>

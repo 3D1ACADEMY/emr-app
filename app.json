@@ -27,9 +27,9 @@
       "buildNumber": "1.0.0",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Authenticate to access confidential clinical emergency data.",
-        "NSSpeechRecognitionUsageDescription": "Allow EMR to transcribe your dictated clinical notes.",
         "NSMicrophoneUsageDescription": "Allow EMR to record your voice for dictated notes.",
-        "NSLocationWhenInUseUsageDescription": "Allow EMR to find the nearest emergency facilities."
+        "NSLocationWhenInUseUsageDescription": "Allow EMR to find the nearest emergency facilities.",
+        "NSUserNotificationsUsageDescription": "Allow CEMS to alert you when a clinical timer completes, even if the app is in the background."
       }
     },
     "android": {
@@ -43,7 +43,11 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION"
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.POST_NOTIFICATIONS"
       ]
     },
     "web": {
@@ -55,6 +59,14 @@
         "expo-camera",
         {
           "cameraPermission": "Allow EMR to access your camera to document emergency incidents."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#D4AF37",
+          "sounds": ["./assets/alarm-beep.wav"]
         }
       ]
     ],

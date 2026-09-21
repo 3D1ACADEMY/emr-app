@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import * as Notifications from 'expo-notifications';
 
 import HomeScreen from './src/screens/HomeScreen';
 import EmergencyScreen from './src/screens/EmergencyScreen';
@@ -19,6 +21,7 @@ import DangerZoneAtlasScreen from './src/screens/DangerZoneAtlasScreen';
 import FacilityLocatorScreen from './src/screens/FacilityLocatorScreen';
 import SecurityGate from './src/components/SecurityGate';
 import DisclaimerScreen from './src/screens/DisclaimerScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 import { COLORS } from './src/constants/theme';
 
 const Stack = createNativeStackNavigator();
@@ -36,7 +39,45 @@ const theme = {
   dark: true,
 };
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
+async function setupNotificationChannel() {
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('cems-timers', {
+      name: 'CEMS Treatment Timers',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [0, 500, 200, 500],
+      sound: 'alarm-beep.wav',
+      lightColor: '#D4AF37',
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+    });
+  }
+}
+
 export default function App() {
+  useEffect(() => {
+    setupNotificationChannel();
+    Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowBadge: false,
+        allowSound: true,
+      },
+    });
+
+    const subscription = Notifications.addNotificationReceivedListener((notification) => {
+      console.log('Notification received:', notification);
+    });
+
+    return () => subscription.remove();
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
@@ -111,6 +152,11 @@ export default function App() {
                   name="FacilityLocator"
                   component={FacilityLocatorScreen}
                   options={{ title: 'Emergency Facilities' }}
+                />
+                <Stack.Screen
+                  name="Settings"
+                  component={SettingsScreen}
+                  options={{ title: 'Settings' }}
                 />
               </Stack.Navigator>
             </NavigationContainer>

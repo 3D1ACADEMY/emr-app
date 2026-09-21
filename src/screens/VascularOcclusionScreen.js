@@ -15,12 +15,26 @@ import ChecklistItem from '../components/ChecklistItem';
 import { calculateHyaluronidase, generateId } from '../utils/helpers';
 import { storage } from '../utils/storage';
 import { confirmEmergencyCall } from '../utils/emergencyCall';
+import { useKeepAwake } from 'expo-keep-awake';
+import * as Clipboard from 'expo-clipboard';
 
 export default function VascularOcclusionScreen({ navigation }) {
+  useKeepAwake();
+
   const [zone, setZone] = useState(HYALURONIDASE_ZONES[0].value);
   const [severity, setSeverity] = useState(SEVERITY_OPTIONS[0].value);
   const [checkedItems, setCheckedItems] = useState({});
   const [incidentId, setIncidentId] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  const doseResult = calculateHyaluronidase(zone, severity);
+
+  const copyDose = async () => {
+    const text = `Hyaluronidase: ${doseResult.totalDose} IU\nVolume: ${doseResult.volumeMl.toFixed(2)} mL (${doseResult.concentrationIuPerMl} IU/mL)\nStorage: ${doseResult.storage || 'Below 25\u00b0C'}\nInstructions: ${doseResult.instructions}`;
+    await Clipboard.setStringAsync(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     const initIncident = async () => {
@@ -40,7 +54,6 @@ export default function VascularOcclusionScreen({ navigation }) {
   }, []);
 
   const protocol = PROTOCOLS.vascularOcclusion;
-  const doseResult = calculateHyaluronidase(zone, severity);
 
   const toggleCheck = async (stepId) => {
     const updated = { ...checkedItems, [stepId]: !checkedItems[stepId] };
@@ -137,8 +150,16 @@ export default function VascularOcclusionScreen({ navigation }) {
           </View>
 
           <View style={styles.resultBox}>
-            <Text style={styles.resultLabel}>Recommended Initial Dosage</Text>
-            <Text style={styles.resultDose}>{doseResult.totalDose} IU</Text>
+            <View style={styles.resultHeader}>
+              <View>
+                <Text style={styles.resultLabel}>Recommended Initial Dosage</Text>
+                <Text style={styles.resultDose}>{doseResult.totalDose} IU</Text>
+              </View>
+              <TouchableOpacity onPress={copyDose} style={styles.copyButton}>
+                <Icon name={copied ? 'check' : 'content-copy'} size={18} color={copied ? COLORS.teal : COLORS.gold} />
+                <Text style={styles.copyText}>{copied ? 'Copied' : 'Copy'}</Text>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.resultVolume}>
               {doseResult.volumeMl.toFixed(2)} mL at {doseResult.concentrationIuPerMl} IU/mL
             </Text>
@@ -314,6 +335,12 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
     marginTop: SPACING.base,
   },
+  resultHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
   resultLabel: {
     color: '#0F2440',
     fontSize: SIZES.md,
@@ -325,6 +352,20 @@ const styles = StyleSheet.create({
     fontSize: SIZES.xxl,
     fontWeight: '800',
     marginBottom: SPACING.sm,
+  },
+  copyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(15,36,64,0.08)',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  copyText: {
+    color: '#0F2440',
+    fontSize: SIZES.xs,
+    fontWeight: '700',
+    marginLeft: 4,
   },
   resultInstructions: {
     color: '#334155',

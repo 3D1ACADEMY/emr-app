@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
 import * as ImageManipulator from 'expo-image-manipulator';
+import * as Haptics from 'expo-haptics';
 import * as FileSystem from 'expo-file-system';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
@@ -71,6 +72,7 @@ export default function IncidentLogScreen({ route }) {
 
   const handleSave = async () => {
     try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const incident = {
         ...(selected || { id: generateId('I') }),
         ...form,
@@ -250,6 +252,7 @@ export default function IncidentLogScreen({ route }) {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
             await deleteIncident(id);
             await loadIncidents();
             if (selected?.id === id) {

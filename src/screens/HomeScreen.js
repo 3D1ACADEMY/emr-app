@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING, SHADOWS } from '../constants/theme';
 import { storage } from '../utils/storage';
 import { isAtlasAvailable } from '../features/dangerZone/data/zones';
+import * as Haptics from 'expo-haptics';
 
 export default function HomeScreen({ navigation }) {
   const [incidentCount, setIncidentCount] = useState(0);
@@ -118,7 +119,10 @@ export default function HomeScreen({ navigation }) {
         {/* Main Emergency CTA */}
         <TouchableOpacity
           style={styles.emergencyButton}
-          onPress={() => navigation.navigate('Emergency')}
+          onPress={() => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+            navigation.navigate('Emergency');
+          }}
           activeOpacity={0.85}
         >
           <Icon name="heart-pulse" size={42} color="#fff" />
@@ -151,7 +155,7 @@ export default function HomeScreen({ navigation }) {
           <BottomButton icon="account-group" label="Patients" onPress={() => navigation.navigate('Patient')} />
           <BottomButton icon="heart-pulse" label="Protocols" onPress={() => navigation.navigate('Emergency')} />
           <BottomButton icon="bell-alert" label="Alerts" onPress={() => navigation.navigate('IncidentLog')} />
-          <BottomButton icon="shield-account" label="Profile" onPress={() => navigation.navigate('Disclaimer')} />
+          <BottomButton icon="cog" label="Settings" onPress={() => navigation.navigate('Settings')} />
         </View>
 
         <Text style={styles.footer}>www.3drejuvenationcode.com</Text>
@@ -161,8 +165,12 @@ export default function HomeScreen({ navigation }) {
 }
 
 function ToolButton({ icon, label, onPress }) {
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onPress();
+  };
   return (
-    <TouchableOpacity style={styles.toolButton} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity style={styles.toolButton} onPress={handlePress} activeOpacity={0.8}>
       <Icon name={icon} size={24} color={COLORS.gold} />
       <Text style={styles.toolLabel}>{label}</Text>
     </TouchableOpacity>

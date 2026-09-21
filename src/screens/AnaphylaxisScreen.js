@@ -16,11 +16,25 @@ import ChecklistItem from '../components/ChecklistItem';
 import { calculateEpinephrine, generateId } from '../utils/helpers';
 import { storage } from '../utils/storage';
 import { confirmEmergencyCall } from '../utils/emergencyCall';
+import { useKeepAwake } from 'expo-keep-awake';
+import * as Clipboard from 'expo-clipboard';
 
 export default function AnaphylaxisScreen({ navigation }) {
+  useKeepAwake();
+
   const [weight, setWeight] = useState(70);
   const [checkedItems, setCheckedItems] = useState({});
   const [incidentId, setIncidentId] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  const epiResult = calculateEpinephrine(weight);
+
+  const copyDose = async () => {
+    const text = `Epinephrine IM: ${epiResult.dose.toFixed(2)} mg\nVolume: ${epiResult.volumeMl.toFixed(2)} mL\nConcentration: ${epiResult.concentration}\nRepeat every 5-15 min as needed\nInstructions: ${epiResult.instructions || 'Administer intramuscularly in the anterolateral thigh.'}`;
+    await Clipboard.setStringAsync(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     const initIncident = async () => {
@@ -40,7 +54,6 @@ export default function AnaphylaxisScreen({ navigation }) {
   }, []);
 
   const protocol = PROTOCOLS.anaphylaxis;
-  const epiResult = calculateEpinephrine(weight);
 
   const toggleCheck = async (stepId) => {
     const updated = { ...checkedItems, [stepId]: !checkedItems[stepId] };
@@ -116,8 +129,16 @@ export default function AnaphylaxisScreen({ navigation }) {
           </View>
 
           <View style={styles.resultBox}>
-            <Text style={styles.resultLabel}>Epinephrine Dose</Text>
-            <Text style={styles.resultDose}>{epiResult.dose.toFixed(2)} mg</Text>
+            <View style={styles.resultHeader}>
+              <View>
+                <Text style={styles.resultLabel}>Epinephrine Dose</Text>
+                <Text style={styles.resultDose}>{epiResult.dose.toFixed(2)} mg</Text>
+              </View>
+              <TouchableOpacity onPress={copyDose} style={styles.copyButton}>
+                <Icon name={copied ? 'check' : 'content-copy'} size={18} color={copied ? COLORS.teal : '#0F2440'} />
+                <Text style={styles.copyText}>{copied ? 'Copied' : 'Copy'}</Text>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.resultInstructions}>
               {epiResult.concentration} • {epiResult.route}
               {'\n'}
@@ -235,8 +256,28 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
     marginTop: SPACING.base,
   },
+  resultHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
   resultLabel: { color: '#0F2440', fontSize: SIZES.md, fontWeight: '700', marginBottom: 4 },
   resultDose: { color: '#0F2440', fontSize: SIZES.xxl, fontWeight: '800', marginBottom: SPACING.sm },
+  copyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(15,36,64,0.08)',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  copyText: {
+    color: '#0F2440',
+    fontSize: SIZES.xs,
+    fontWeight: '700',
+    marginLeft: 4,
+  },
   resultInstructions: { color: '#334155', fontSize: SIZES.sm, lineHeight: 20 },
   documentButton: {
     backgroundColor: COLORS.gold,
