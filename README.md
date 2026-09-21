@@ -77,10 +77,10 @@ Produces a working static bundle in `dist/`.
 ## Production AAB
 
 **CEMS-PRODUCTION.aab** (Google Play upload)
-- Download: https://expo.dev/artifacts/eas/R87Zv2OaqBTIiG4k53LVha8YWqaJg8-D6TQbxOwXEwk.aab
-- Size: ~35 MB
-- Build ID: `93c63323-4ab3-453f-95ea-05a1f76d99db`
-- Version Code: `2`
+- Download: https://expo.dev/artifacts/eas/WjF2--PLcjLz-du_sHbskML0nARioFHPoeu3J7U9szM.aab
+- Size: ~40 MB
+- Build ID: `84fa85df-0242-4516-b65b-d8d80232a56c`
+- Version Code: `3`
 - Package: `com.rejuvenation.emr`
 
 ## EAS Build (iOS/Android store binaries)
