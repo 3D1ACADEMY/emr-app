@@ -15,6 +15,7 @@ import { PROTOCOLS, EPINEPHRINE_WEIGHTS } from '../constants/emergencyData';
 import ChecklistItem from '../components/ChecklistItem';
 import { calculateEpinephrine, generateId } from '../utils/helpers';
 import { storage } from '../utils/storage';
+import { confirmEmergencyCall } from '../utils/emergencyCall';
 
 export default function AnaphylaxisScreen({ navigation }) {
   const [weight, setWeight] = useState(70);
@@ -62,14 +63,25 @@ export default function AnaphylaxisScreen({ navigation }) {
         <Text style={styles.title}>{protocol.title}</Text>
         <Text style={styles.description}>{protocol.description}</Text>
 
-        <TouchableOpacity
-          style={styles.timerButton}
-          onPress={() => navigation.navigate('Timer', { defaultMinutes: 5, label: 'Epinephrine Re-Dose' })}
-          activeOpacity={0.8}
-        >
-          <Icon name="timer" size={22} color={COLORS.gold} />
-          <Text style={styles.timerText}>Start 5-Min Epi Re-Dose Timer</Text>
-        </TouchableOpacity>
+        <View style={styles.actionRow}>
+          <TouchableOpacity
+            style={styles.timerButton}
+            onPress={() => navigation.navigate('Timer', { defaultMinutes: 5, label: 'Epinephrine Re-Dose' })}
+            activeOpacity={0.8}
+          >
+            <Icon name="timer" size={22} color={COLORS.gold} />
+            <Text style={styles.timerText}>5-Min Timer</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.callButton}
+            onPress={confirmEmergencyCall}
+            activeOpacity={0.8}
+          >
+            <Icon name="phone" size={22} color="#fff" />
+            <Text style={styles.callButtonText}>911</Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Immediate Action Checklist</Text>
@@ -148,17 +160,39 @@ const styles = StyleSheet.create({
   headerId: { color: COLORS.textMuted, fontSize: SIZES.sm, fontFamily: 'monospace' },
   title: { color: COLORS.text, fontSize: SIZES.xxl, fontWeight: '800', marginBottom: 4 },
   description: { color: COLORS.textMuted, fontSize: SIZES.md, marginBottom: SPACING.lg },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: SPACING.lg,
+    gap: SPACING.base,
+  },
   timerButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: `${COLORS.gold}15`,
     borderWidth: 1,
     borderColor: COLORS.gold,
     borderRadius: 10,
     padding: SPACING.base,
-    marginBottom: SPACING.lg,
   },
   timerText: { color: COLORS.gold, fontSize: SIZES.md, fontWeight: '700', marginLeft: SPACING.base },
+  callButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.danger,
+    borderRadius: 10,
+    paddingVertical: SPACING.base,
+    paddingHorizontal: SPACING.lg,
+  },
+  callButtonText: {
+    color: '#fff',
+    fontSize: SIZES.md,
+    fontWeight: '800',
+    marginLeft: SPACING.sm,
+  },
   section: {
     backgroundColor: COLORS.card,
     borderRadius: 12,

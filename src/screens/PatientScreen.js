@@ -59,9 +59,22 @@ export default function PatientScreen() {
     }
   };
 
-  const handleDelete = async (id) => {
-    await storage.deletePatient(id);
-    await loadPatients();
+  const handleDelete = (id) => {
+    Alert.alert(
+      'Delete Patient Context',
+      'This will permanently remove this patient record. Continue?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await storage.deletePatient(id);
+            await loadPatients();
+          },
+        },
+      ]
+    );
   };
 
   return (

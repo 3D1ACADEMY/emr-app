@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  AppState,
 } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { COLORS, SIZES, SPACING, SHADOWS } from '../constants/theme';
 import { hasSetPin, setPin, validatePin } from '../utils/secureStorage';
+
+const AUTO_LOCK_MS = 60 * 1000; // 60 seconds
 
 export default function SecurityGate({ children }) {
   const [isReady, setIsReady] = useState(false);
@@ -19,9 +22,31 @@ export default function SecurityGate({ children }) {
   const [confirmPin, setConfirmPin] = useState('');
   const [error, setError] = useState('');
   const [biometricType, setBiometricType] = useState(null);
+  const lastActiveRef = useRef(Date.now());
+  const appStateRef = useRef(AppState.currentState);
 
   useEffect(() => {
     checkSecurity();
+
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (
+        appStateRef.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        const awayTime = Date.now() - lastActiveRef.current;
+        if (awayTime > AUTO_LOCK_MS) {
+          setIsAuthenticated(false);
+          setPin('');
+          setError('');
+        }
+      }
+      if (nextAppState === 'active') {
+        lastActiveRef.current = Date.now();
+      }
+      appStateRef.current = nextAppState;
+    });
+
+    return () => subscription.remove();
   }, []);
 
   const checkSecurity = async () => {

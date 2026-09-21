@@ -240,6 +240,28 @@ export default function IncidentLogScreen({ route }) {
     setForm((prev) => ({ ...prev, voiceNotes: updated }));
   };
 
+  const handleDeleteIncident = (id) => {
+    Alert.alert(
+      'Delete Incident Log',
+      'This will permanently remove this incident and its attachments. Continue?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteIncident(id);
+            await loadIncidents();
+            if (selected?.id === id) {
+              setSelected(null);
+              setForm({});
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const playVoiceNote = async (uri) => {
     try {
       // Stop any currently playing sound
@@ -506,8 +528,13 @@ export default function IncidentLogScreen({ route }) {
             >
               <View style={styles.incidentHeader}>
                 <Text style={styles.incidentId}>{incident.id}</Text>
-                <View style={[styles.statusBadge, { backgroundColor: incident.status === 'completed' ? COLORS.success : COLORS.warning }]}>
-                  <Text style={styles.statusText}>{incident.status}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={[styles.statusBadge, { backgroundColor: incident.status === 'completed' ? COLORS.success : COLORS.warning }]}>
+                    <Text style={styles.statusText}>{incident.status}</Text>
+                  </View>
+                  <TouchableOpacity onPress={() => handleDeleteIncident(incident.id)} style={{ marginLeft: SPACING.sm }}>
+                    <Icon name="trash-can-outline" size={20} color={COLORS.danger} />
+                  </TouchableOpacity>
                 </View>
               </View>
               <Text style={styles.incidentTitle}>{incident.title || 'Untitled'}</Text>

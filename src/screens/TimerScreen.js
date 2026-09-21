@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Audio } from 'expo-av';
 import { COLORS, SIZES, SPACING, SHADOWS } from '../constants/theme';
 import { formatTime } from '../utils/helpers';
 
@@ -17,12 +18,36 @@ export default function TimerScreen({ route }) {
   const [isRunning, setIsRunning] = useState(false);
   const [initialSeconds, setInitialSeconds] = useState(defaultMinutes * 60);
   const intervalRef = useRef(null);
+  const soundRef = useRef(null);
 
   useEffect(() => {
+    const loadSound = async () => {
+      try {
+        const { sound } = await Audio.Sound.createAsync(
+          require('../../assets/alarm-beep.wav')
+        );
+        soundRef.current = sound;
+      } catch (e) {
+        console.warn('Failed to load timer alarm sound:', e.message);
+      }
+    };
+    loadSound();
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (soundRef.current) soundRef.current.unloadAsync();
     };
   }, []);
+
+  const playAlarm = async () => {
+    try {
+      if (soundRef.current) {
+        await soundRef.current.setPositionAsync(0);
+        await soundRef.current.playAsync();
+      }
+    } catch (e) {
+      console.warn('Failed to play timer alarm:', e.message);
+    }
+  };
 
   useEffect(() => {
     if (isRunning) {
@@ -32,6 +57,7 @@ export default function TimerScreen({ route }) {
             clearInterval(intervalRef.current);
             setIsRunning(false);
             Vibration.vibrate([0, 500, 200, 500, 200, 500]);
+            playAlarm();
             return 0;
           }
           return prev - 1;

@@ -14,6 +14,7 @@ import { PROTOCOLS, HYALURONIDASE_ZONES, SEVERITY_OPTIONS } from '../constants/e
 import ChecklistItem from '../components/ChecklistItem';
 import { calculateHyaluronidase, generateId } from '../utils/helpers';
 import { storage } from '../utils/storage';
+import { confirmEmergencyCall } from '../utils/emergencyCall';
 
 export default function VascularOcclusionScreen({ navigation }) {
   const [zone, setZone] = useState(HYALURONIDASE_ZONES[0].value);
@@ -64,15 +65,25 @@ export default function VascularOcclusionScreen({ navigation }) {
         <Text style={styles.title}>{protocol.title}</Text>
         <Text style={styles.description}>{protocol.description}</Text>
 
-        {/* Timer Shortcut */}
-        <TouchableOpacity
-          style={styles.timerButton}
-          onPress={() => navigation.navigate('Timer', { defaultMinutes: 15, label: 'Re-Dose Hyaluronidase' })}
-          activeOpacity={0.8}
-        >
-          <Icon name="timer" size={22} color={COLORS.gold} />
-          <Text style={styles.timerText}>Start 15-Min Re-Dose Timer</Text>
-        </TouchableOpacity>
+        <View style={styles.actionRow}>
+          <TouchableOpacity
+            style={styles.timerButton}
+            onPress={() => navigation.navigate('Timer', { defaultMinutes: 15, label: 'Re-Dose Hyaluronidase' })}
+            activeOpacity={0.8}
+          >
+            <Icon name="timer" size={22} color={COLORS.gold} />
+            <Text style={styles.timerText}>15-Min Timer</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.callButton}
+            onPress={confirmEmergencyCall}
+            activeOpacity={0.8}
+          >
+            <Icon name="phone" size={22} color="#fff" />
+            <Text style={styles.callButtonText}>911</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Checklist */}
         <View style={styles.section}>
@@ -208,21 +219,43 @@ const styles = StyleSheet.create({
     fontSize: SIZES.md,
     marginBottom: SPACING.lg,
   },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: SPACING.lg,
+    gap: SPACING.base,
+  },
   timerButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: `${COLORS.gold}15`,
     borderWidth: 1,
     borderColor: COLORS.gold,
     borderRadius: 10,
     padding: SPACING.base,
-    marginBottom: SPACING.lg,
   },
   timerText: {
     color: COLORS.gold,
     fontSize: SIZES.md,
     fontWeight: '700',
     marginLeft: SPACING.base,
+  },
+  callButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.danger,
+    borderRadius: 10,
+    paddingVertical: SPACING.base,
+    paddingHorizontal: SPACING.lg,
+  },
+  callButtonText: {
+    color: '#fff',
+    fontSize: SIZES.md,
+    fontWeight: '800',
+    marginLeft: SPACING.sm,
   },
   section: {
     backgroundColor: COLORS.card,
