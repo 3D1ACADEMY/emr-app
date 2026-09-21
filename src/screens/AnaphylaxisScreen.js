@@ -84,7 +84,7 @@ export default function AnaphylaxisScreen({ navigation }) {
         </View>
 
         <View style={styles.calculatorCard}>
-          <Text style={styles.sectionTitle}>Epinephrine Dosing Calculator</Text>
+          <Text style={styles.calculatorTitle}>Epinephrine Dosing Calculator</Text>
 
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Patient Weight (kg)</Text>
@@ -94,9 +94,10 @@ export default function AnaphylaxisScreen({ navigation }) {
                 onValueChange={(itemValue) => setWeight(itemValue)}
                 dropdownIconColor={COLORS.gold}
                 style={styles.picker}
+                itemStyle={{ color: '#0F2440', fontSize: SIZES.md }}
               >
                 {EPINEPHRINE_WEIGHTS.map((w) => (
-                  <Picker.Item key={w} label={`${w} kg`} value={w} color={COLORS.text} />
+                  <Picker.Item key={w} label={`${w} kg`} value={w} color="#0F2440" />
                 ))}
               </Picker>
             </View>
@@ -168,35 +169,41 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { color: COLORS.gold, fontSize: SIZES.lg, fontWeight: '700', marginBottom: SPACING.md },
   calculatorCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: SPACING.lg,
     marginBottom: SPACING.lg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: '#E2E8F0',
+  },
+  calculatorTitle: {
+    color: '#0F2440',
+    fontSize: SIZES.lg,
+    fontWeight: '700',
+    marginBottom: SPACING.md,
   },
   inputGroup: { marginBottom: SPACING.lg },
-  inputLabel: { color: COLORS.textMuted, fontSize: SIZES.sm, marginBottom: SPACING.sm, fontWeight: '600' },
+  inputLabel: { color: '#0F2440', fontSize: SIZES.sm, marginBottom: SPACING.sm, fontWeight: '600' },
   pickerContainer: {
-    backgroundColor: COLORS.surface,
+    backgroundColor: '#F8FAFC',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLORS.borderStrong,
+    borderColor: '#CBD5E1',
     overflow: 'hidden',
   },
-  picker: { color: COLORS.text },
+  picker: { color: '#0F2440' },
   resultBox: {
-    backgroundColor: COLORS.backgroundAlt,
+    backgroundColor: '#F8FAFC',
     borderLeftWidth: 4,
-    borderLeftColor: COLORS.gold,
+    borderLeftColor: '#D4AF37',
     borderTopRightRadius: 6,
     borderBottomRightRadius: 6,
     padding: SPACING.lg,
     marginTop: SPACING.base,
   },
-  resultLabel: { color: COLORS.goldLight, fontSize: SIZES.md, fontWeight: '700', marginBottom: 4 },
-  resultDose: { color: COLORS.text, fontSize: SIZES.xxl, fontWeight: '800', marginBottom: SPACING.sm },
-  resultInstructions: { color: COLORS.textMuted, fontSize: SIZES.sm, lineHeight: 20 },
+  resultLabel: { color: '#0F2440', fontSize: SIZES.md, fontWeight: '700', marginBottom: 4 },
+  resultDose: { color: '#0F2440', fontSize: SIZES.xxl, fontWeight: '800', marginBottom: SPACING.sm },
+  resultInstructions: { color: '#334155', fontSize: SIZES.sm, lineHeight: 20 },
   documentButton: {
     backgroundColor: COLORS.gold,
     borderRadius: 12,
